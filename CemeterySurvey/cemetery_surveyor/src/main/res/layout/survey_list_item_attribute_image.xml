@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/attribute_vertical_spacing"
+    android:paddingLeft="16dp">
+
+    <!-- The category headings, or text, measurement input and category picture icon -->
+
+    <ImageButton
+        android:id="@+id/imagebutton_survey_attribute_thumbnail"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/thumbnail_size_dense"
+        android:layout_weight="1"
+        android:background="@drawable/custom_button_style"
+        android:clickable="false"
+        android:padding="5dp"
+        android:scaleType="centerCrop" />
+
+
+    <!-- Camera option -->
+    <ImageView
+        android:id="@+id/imageview_attribute_camera_action"
+        android:layout_width="wrap_content"
+        android:layout_height="54dp"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_photo_camera_black_36dp"
+        android:visibility="gone" />
+</LinearLayout>

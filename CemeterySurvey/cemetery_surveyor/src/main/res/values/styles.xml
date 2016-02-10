@@ -1,0 +1,38 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="CemeteryTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/cemeteryColorPrimary</item>
+        <item name="colorPrimaryDark">@color/cemeteryColorPrimaryDark</item>
+        <item name="colorAccent">@color/cemeteryColorAccent</item>
+    </style>
+
+    <style name="SectionTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/sectionColorPrimary</item>
+        <item name="colorPrimaryDark">@color/sectionColorPrimaryDark</item>
+        <item name="colorAccent">@color/sectionColorAccent</item>
+    </style>
+
+    <style name="GraveTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/graveColorPrimary</item>
+        <item name="colorPrimaryDark">@color/graveColorPrimaryDark</item>
+        <item name="colorAccent">@color/graveColorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+</resources>

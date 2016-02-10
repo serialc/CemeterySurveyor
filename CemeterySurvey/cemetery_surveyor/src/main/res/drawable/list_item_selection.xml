@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- pressed -->
+    <item android:drawable="@color/cemeteryColorAccent" android:state_pressed="true" android:tint="@color/cemeteryColorAccent" />
+
+    <!-- selected -->
+    <item android:drawable="@color/sunshine_light_blue" android:state_selected="true" android:tint="@color/sunshine_light_blue" />
+
+    <!-- default -->
+    <item android:drawable="@android:color/transparent" />
+</selector>

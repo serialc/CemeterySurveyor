@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="divider">#B6B6B6</color>
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="cemeteryColorPrimary">#e91e63</color>
+    <color name="cemeteryColorPrimaryDark">#c2185b</color>
+    <color name="cemeteryColorAccent">#03a9f4</color>
+
+    <color name="sectionColorPrimary">#2196f3</color>
+    <color name="sectionColorPrimaryDark">#1976d2</color>
+    <color name="sectionColorAccent">#8bc34a</color>
+
+    <color name="graveColorPrimary">#4caf50</color>
+    <color name="graveColorPrimaryDark">#388e3c</color>
+    <color name="graveColorAccent">#ff5722</color>
+
+    <color name="sunshine_light_blue">#ff64c2f4</color>
+    <color name="sunshine_blue">#ff1ca8f4</color>
+    <color name="sunshine_dark_blue">#0288D1</color>
+</resources>

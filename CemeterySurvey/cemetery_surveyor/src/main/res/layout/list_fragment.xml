@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.android.sunshine.app.ForecastFragment">
+
+    <TextView
+        android:id="@+id/fragment_textview_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Placeholder"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <GridView
+        android:id="@+id/gridview_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:numColumns="@integer/grid_view_colnum"></GridView>
+
+</LinearLayout>

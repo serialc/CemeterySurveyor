@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- pressed -->
+    <item android:drawable="@color/sunshine_light_blue" android:state_pressed="true" android:tint="@color/sunshine_light_blue" />
+
+    <!-- focused -->
+    <item android:drawable="@color/cemeteryColorAccent" android:state_focused="true" android:tint="@color/cemeteryColorAccent" />
+
+    <!-- selected -->
+    <item android:drawable="@color/sunshine_light_blue" android:state_selected="true" android:tint="@color/sunshine_light_blue" />
+
+    <!-- checked (for toggle buttons) -->
+    <item android:drawable="@color/sunshine_light_blue" android:state_checked="true" android:tint="@color/sunshine_light_blue" />
+
+    <!-- unchecked (for toggle buttons) -->
+    <item android:drawable="@color/divider" android:state_checked="false" />
+
+    <!-- default -->
+    <item android:drawable="@color/divider" />
+
+</selector>

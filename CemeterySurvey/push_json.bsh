@@ -1,0 +1,3 @@
+#!/bin/bash
+
+adb push ~/Documents/Projects/Cemetery\ Science/3_Standardization/json/survey_template.json /sdcard/cemetery_survey_application/template/survey_template.json

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CemeterySurvey.iml" filepath="$PROJECT_DIR$/CemeterySurvey.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cemetery_surveyor/cemetery_surveyor.iml" filepath="$PROJECT_DIR$/cemetery_surveyor/cemetery_surveyor.iml" />
+    </modules>
+  </component>
+</project>

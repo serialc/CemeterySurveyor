@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.frakturmedia.cemeterysurvey.CemeteryActivity">
+    <item
+        android:id="@+id/action_take_picture"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_photo_camera_white_36dp"
+        android:title="@string/action_take_picture"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_create_bookmark"
+        android:icon="@drawable/ic_bookmark_white_36dp"
+        android:orderInCategory="2"
+        android:title="@string/action_create_bookmark"
+        app:showAsAction="always" />
+</menu>

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+adb pull /sdcard/cemetery_survey_application/export/data/ ~/Desktop/CSA/

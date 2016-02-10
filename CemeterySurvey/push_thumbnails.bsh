@@ -1,0 +1,3 @@
+#!/bin/bash
+
+adb push ~/Documents/Projects/Cemetery\ Science/4_Development/Data/set\ thumbnail\ icons/Grabplatten /sdcard/cemetery_survey_application/thumbnails/Grabplatten
