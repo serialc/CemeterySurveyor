@@ -8,8 +8,8 @@ android {
         applicationId "net.frakturmedia.cemeterysurvey"
         minSdkVersion 13
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.03"
     }
     buildTypes {
         release {

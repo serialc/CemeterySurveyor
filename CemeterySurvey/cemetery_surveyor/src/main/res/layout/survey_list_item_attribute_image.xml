@@ -16,9 +16,7 @@
         android:layout_weight="1"
         android:background="@drawable/custom_button_style"
         android:clickable="false"
-        android:padding="5dp"
         android:scaleType="centerCrop" />
-
 
     <!-- Camera option -->
     <ImageView

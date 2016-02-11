@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -485,7 +486,7 @@ public class CsCursorAdapter extends CursorAdapter {
                                 case Utility.surveyDataTypes.THUMBNAIL: {
 
                                     attView = inflater.inflate(R.layout.survey_list_item_attribute_image, attributesLayout, false);
-                                    ImageButton attImage = (ImageButton) attView.findViewById(R.id.imagebutton_survey_attribute_thumbnail);
+                                    final ImageButton attImage = (ImageButton) attView.findViewById(R.id.imagebutton_survey_attribute_thumbnail);
 
                                     final String picturePath = Utility.dataPaths.THUMBNAILS + "/" + catThumbDir + "/" + attName;
                                     final File pictureFile = new File(picturePath);
@@ -508,6 +509,9 @@ public class CsCursorAdapter extends CursorAdapter {
                                     // Check if it should be displayed as selected
                                     if( attCursor.getString(COL_SCOPE_ATTNAME) != null ) {
                                         attImage.setSelected(true);
+                                        attImage.setColorFilter(view.getResources().getColor(R.color.sunshine_light_blue), PorterDuff.Mode.MULTIPLY);
+                                    } else {
+                                        attImage.clearColorFilter();
                                     }
 
                                     final boolean sIsSelected = attImage.isSelected();
@@ -632,10 +636,10 @@ public class CsCursorAdapter extends CursorAdapter {
                                         @Override
                                         public boolean onLongClick(View v) {
                                             // if this button is active
-                                            if (v.isActivated()) {
+                                            if (v.isSelected()) {
                                                 // UPDATE
                                                 ContentValues cv = new ContentValues();
-                                                cv.put(catFullName, "");
+                                                cv.putNull(catFullName);
 
                                                 // update the column
                                                 int updatedRows = v.getContext().getContentResolver().update(getScopeUri(scope),
