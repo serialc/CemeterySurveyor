@@ -1,0 +1,460 @@
+\documentclass{scrreprt}
+\usepackage{listings}
+\usepackage[english]{babel}
+\usepackage{underscore}
+\usepackage{helvet}
+\usepackage{graphicx}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[bookmarks=true]{hyperref}
+\hypersetup{
+   % bookmarks=false,    % show bookmarks bar?
+    pdftitle={Design Specifications},    % title
+    pdfauthor={Cyrille M\'edard de Chardon},                     % author
+    pdfsubject={TeX and LaTeX},                        % subject of the document
+    pdfkeywords={TeX, LaTeX, graphics, images}, % list of keywords
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=blue,       % color of internal links
+    citecolor=black,       % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=purple,        % color of external links
+    linktoc=page            % only page is linked
+}
+\def\myversion{1.0}
+\title{
+\flushright
+\rule{16cm}{5pt}\vskip1cm
+\Huge{Cemetery Survey Application}\\
+\vspace{2cm}
+\LARGE{Usage manual \myversion\\}
+\vspace{2cm}
+Cyrille M\'edard de Chardon\\
+\date{\today}
+\vfill
+\rule{16cm}{5pt}
+}
+\author{}
+\date{}
+\usepackage{hyperref}
+\begin{document}
+\maketitle
+\tableofcontents
+
+%\chapter*{Revisions}
+%\section*{Additions to Design specifications \myversion}
+
+\chapter{Introduction}
+Cemetery Surveyor is designed to be part of a survey workflow consisting of:
+\begin{itemize}
+\item the creation of an ontology,
+ the designing of a survey consisting of categories and attributes defined in a JSON template,
+\item the designating of cemetery, cemetery sections and graves in a GIS with unique identifiers,
+\item the actual surveying of the cemetery using the application,
+\item the exporting of gathered data, and
+\item geospatial analysis with a GIS or statistical analysis.
+\end{itemize}
+
+The application is useless without the appropriate documentation. The documentation is currently located on GitHub with the source code: https://github.com/serialc/CemeterySurveyor
+
+This application was funded by the University of Luxembourg (http://wwwen.uni.lu/).
+
+\section{Android version}
+Currently the application is designed to work with the Android API 13+ (Android 3.2 - Honeycomb MR2).
+
+
+\chapter{Uninstallation and updates}
+As the data gathered is extremely valuable due to the time it takes to gather it, please read carefully to prevent data loss.
+
+Uninstalling CSA removes all data in the database. Data that are exported, using the export functionality on the main screen, and pictures are stored in the device's root folder named \textbf{cemetery_survey_application}. These will not be deleted. Pictures are always directly placed in this directory when taken and need not be explicitly exported. Exported data and pictures are stored in the \textbf{export} directory located at \textbf{/cemetery_survey_application/export/}. See Section \ref{file_structure} for File structure details.
+
+Updates to the application may require an update to the JSON template format or clear all the data from the database if a new table structure is required. \textit{Always export all your data before performing an update}.
+
+\chapter{Survey template}
+The survey template creates immense flexibility in designing a survey tailored for your needs. This flexibility can cause some problems however if category names are not chosen carefully to avoid duplicates.
+
+The template is constructed using JSON syntax. We will formalize the syntax in this chapter.
+
+\section{Terminology}
+We refer to a \textbf{category} as one data point or item to be surveyed. The \textbf{attribute} refers to the descriptor for that category item. So a category for grave stone material may have multiple attributes such as marble, sandstone, granite.
+
+\section{Category types}
+\label{category_types}
+There exist different category types to suit the desired data collection need:
+
+\begin{enumerate}
+\item \textbf{Set} ($set$): Multiple textual items from which none, one, multiple or all may be selected.
+\item \textbf{Set thumbnail} ($set\_thumbnail$): Same as the set but with images rather than textual descriptions.
+\item \textbf{Radio} ($radio$): Only one can be selected from textual item list.
+\item \textbf{Binary} ($binary$): Same as radio but only two choices are available.
+\item \textbf{Measurement} ($measurement$): A number is entered. Context determines the unit.
+\item \textbf{Text} ($text$): Any text can be entered.
+\end{enumerate}
+
+\section{Data type requirements}
+\label{descriptors}
+There exist eight \textbf{descriptors} for each category type (Section \ref{category_types}). The six data types require different combinations of these descriptors:
+
+\begin{itemize}
+\item $\_type$:  A field used by the application to determine what this is..
+\item $data\_type$: What type of survey category this is.
+\item $name$: The name kept in records and exported to the GIS referring to this variable. \textbf{This must be unique}.
+\item $attributes$: The list of items to choose from. Is not necessary for \textbf{Measurement} and \textbf{Text} data types.
+\item $title$: The title for the category to be shown to the user.
+\item $required$: A boolean value indicating whether the user should be warned if this field was not completed.
+\item $camera$: Whether the category should have an option to take a picture.
+\item $attrib\_camera$: Whether each attribute (in set, radio, binary types) has an option to take a picture.
+\end{itemize}
+
+\subsection{Descriptor requirements}
+The following descriptors are required for all data types:
+\begin{itemize}
+\item $\_type$
+\item $data\_type$
+\item $name$
+\end{itemize}
+
+The following data types also require the \textbf{attributes} descriptors:
+\begin{itemize}
+\item Set
+\item Set thumbnails
+\item Radio
+\item Binary
+\end{itemize}
+
+The following descriptors are optional. Default values will be assigned if they are not provided explicitly:
+\begin{itemize}
+\item $title$: The title for the category to be shown to the user. Will use the $name$ if $title$ is not provided.
+\item $required$: A boolean value indicating whether the user should be warned if this field was not completed. Set to $false$, not required, if not provided.
+\item $camera$: Whether the category should have an option to take a picture. Set to $false$, not available, if not provided.
+\item $attrib\_camera$: Whether each attribute (in set, radio, binary types) has an option to take a picture. Set to $false$, not available, if not provided.
+\end{itemize}
+
+\section{JSON file structure}
+The root of the JSON file must contain the three \textbf{scope} objects: cemetery, (cemetery) section and grave:
+\begin{verbatim}
+{
+    "_type": "root",
+    "cemetery": [],
+    "section": [],
+    "grave": []
+}
+\end{verbatim}
+
+Within each of these item's lists/arrays '[ ]' must exist a \textbf{tab} object. Note that a title for the tab can be provided. Although required for the cemetery, section and grave scopes, the tab functionality is only implemented for the graves. So having multiple tabs for the grave scope is recommended while pointless (but harmless) for the cemetery and section.
+\begin{verbatim}
+{
+      "_type": "tab",
+      "contents": [],
+      "title": "Base"
+},
+\end{verbatim}
+
+Within each tab must be on or more \textbf{group} objects. Groups are important for categories that do not require explicit tiles such as text and measurements.
+
+\begin{verbatim}
+{
+      "_type": "group",
+      "contents": [],
+      "title": "Stone details"
+}
+\end{verbatim}
+
+Finally within each group must be one or more \textbf{category} objects. In this example a \textit{set} data type is shown.
+
+\begin{verbatim}
+{
+      "_type": "category",
+      "camera": true,
+      "attrib_camera": true,
+      "data_type": "set",
+      "name": "surrounds_cemetery",
+      "title": "Surrounds cemetery",
+      "attributes": [
+            "Hedge",
+            "Metal fence",
+            "Wood fence",
+            "Stone wall",
+            "Nothing"
+      ]
+}
+\end{verbatim}
+
+\section{Data type category syntax}
+\label{sec_data_types}
+Data types have different descriptor requirements (see Section \ref{descriptors} for descriptors). We define each data type's descriptor requirements here.
+
+\subsection{Set}
+This data type allows the selection of multiple attributes within the category.\\
+\textbf{Required}
+\begin{itemize}
+\item $\_type$:  Must be defined as "category".
+\item $data\_type$: Must be defined as "set".
+\item $name$: The unique name kept in records and exported to the GIS referring to this category.
+\item $attributes$: The list of items to choose from.
+\end{itemize}
+\textbf{Optional}
+\begin{itemize}
+\item $camera$: Whether the category should have an option to take a picture.
+\item $attrib\_camera$: Whether each attribute has an option to take a picture.
+\item $title$: The title for the category to be shown to the user. $name$ is used if this is not provided.
+\item $required$: A boolean value (true, false) indicating whether the user should be warned if this field was not completed.
+\end{itemize}
+
+\newpage
+\subsection{Set thumbnail}
+\label{dt_thumbnails}
+This data type allows the selection of multiple attributes within the category but uses images rather than text as selectable attributes. See Section \ref{upload_thumbnails} for information on locating the image files on the device.\\
+\textbf{Required}
+\begin{itemize}
+\item $\_type$:  Must be defined as "category".
+\item $data\_type$: Must be defined as "set_thumbnail".
+\item $name$: The unique name kept in records and exported to the GIS referring to this category.
+\item $attributes$: The folder name (e.g., Cross_shape) for the pictures for this category. File names in this folder will become the attribute name in exported data. Folder location is specified in Section \ref{file_structure}.
+\end{itemize}
+\textbf{Optional}
+\begin{itemize}
+\item $camera$: Whether the category should have an option to take a picture.
+\item $attrib\_camera$: Whether each attribute has an option to take a picture.
+\item $title$: The title for the category to be shown to the user. $name$ is used if this is not provided.
+\item $required$: A boolean value (true, false) indicating whether the user should be warned if this field was not completed.
+\end{itemize}
+Keep the thumbnail sizes below 400 pixels in width and height for better performance.
+
+\newpage
+\subsection{Radio}
+This data type only allows the selection of \textbf{one} attribute from a set.
+\textbf{Required}
+\begin{itemize}
+\item $\_type$:  Must be defined as "category".
+\item $data\_type$: Must be defined as "radio".
+\item $name$: The unique name kept in records and exported to the GIS referring to this category.
+\item $attributes$: The list of items to choose from.
+\end{itemize}
+\textbf{Optional}
+\begin{itemize}
+\item $camera$: Whether the category should have an option to take a picture.
+\item $attrib\_camera$: Whether each attribute has an option to take a picture.
+\item $title$: The title for the category to be shown to the user. $name$ is used if this is not provided.
+\item $required$: A boolean value (true, false) indicating whether the user should be warned if this field was not completed.
+\end{itemize}
+
+\newpage
+\subsection{Binary}
+This data type only allows the indication of \textbf{one} true or false.
+\textbf{Required}
+\begin{itemize}
+\item $\_type$:  Must be defined as "category".
+\item $data\_type$: Must be defined as "binary".
+\item $name$: The unique name kept in records and exported to the GIS referring to this category.
+\end{itemize}
+\textbf{Optional}
+\begin{itemize}
+\item $camera$: Whether the category should have an option to take a picture.
+\item $attrib\_camera$: Whether each attribute has an option to take a picture.
+\item $title$: The title for the category to be shown to the user. $name$ is used if this is not provided.
+\item $required$: A boolean value (true, false) indicating whether the user should be warned if this field was not completed.
+\end{itemize}
+
+\newpage
+\subsection{Measurement}
+This data type allows entering a number only. The $name$ should specify the measurement unit (e.g., grave_height_cm, grave_year). Integers only are possible.
+\textbf{Required}
+\begin{itemize}
+\item $\_type$:  Must be defined as "category".
+\item $data\_type$: Must be defined as "measurement".
+\item $name$: The unique name kept in records and exported to the GIS referring to this category.
+\end{itemize}
+\textbf{Optional}
+\begin{itemize}
+\item $camera$: Whether the category should have an option to take a picture.
+\item $title$: The title for the category to be shown to the user. $name$ is used if this is not provided.
+\item $required$: A boolean value (true, false) indicating whether the user should be warned if this field was not completed.
+\end{itemize}
+
+\newpage
+\subsection{Text}
+This data type allows the entering of any text. This probably shouldn't be overly used as it will require further coding work.
+\textbf{Required}
+\begin{itemize}
+\item $\_type$:  Must be defined as "category".
+\item $data\_type$: Must be defined as "text".
+\item $name$: The unique name kept in records and exported to the GIS referring to this category.
+\end{itemize}
+\textbf{Optional}
+\begin{itemize}
+\item $camera$: Whether the category should have an option to take a picture.
+\item $title$: The title for the category to be shown to the user. $name$ is used if this is not provided.
+\item $required$: A boolean value (true, false) indicating whether the user should be warned if this field was not completed.
+\end{itemize}
+
+\section{Uploading the template}
+Connect you tablet with a USB cable to a computer. Using Android File Transfer (see Section \ref{atf}) copy your template file to the \textit{cemetery_survey_application/template/} location. Your template file \textbf{must} be named \textit{survey_template.json}.
+
+See Section \ref{file_structure} for File structure details.
+
+\section{Uploading thumbnails}
+\label{upload_thumbnails}
+Connect you tablet with a USB cable to a computer. Using Android File Transfer (see Section \ref{atf}) copy your thumbnail folder file to the \textit{cemetery_survey_application/thumbnails/} location. The exact same thumbnail folder name must be provided for the appropriate category attibute in your survey_template.json. It is highly recommended that you don't use pictures of greater dimension than 400 pixels in width or height as file size can impact loading times of the relevant survey screens displaying the thumbnails.
+
+See Section \ref{dt_thumbnails} for thumbnail data type syntax.
+
+See Section \ref{file_structure} for File structure details.
+
+\chapter{Application usage}
+The application has four main activities:
+\begin{itemize}
+\item Main - select cemetery, bookmarks and perform administrative tasks.
+\item Cemetery - complete the cemetery scope survey, take pictures and select a (cemetery) section.
+\item Section - complete the section scope survey, take pictures and select a grave.
+\item Grave - complete the grave scope survey across multiple tabs and take pictures.
+\end{itemize}
+
+We also describe the survey behaviour across the three scopes in Section \ref{au_surveys}.
+
+\section{Main}
+From the Main activity you can:
+\begin{itemize}
+\item Select a cemetery to survey
+\item Edit a cemetery name
+\item Select a bookmark to jump to a cemetery, (cemetery) section or grave.
+\item Create a new cemetery
+\item Reload the JSON template
+\item Add an attribute to a radio or set data type
+\item Export the database data
+\end{itemize}
+
+We further describe some of these actions.
+
+\subsection{Edit cemetery name}
+While 'clicking' on a cemetery name takes you to the cemetery activity, holding your putting down on the cemetery name reveals an edit dialogue. Change the cemetery name and click 'OK'.
+
+\subsection{Create a new cemetery}
+Click on the '+' symbol in the circle at the bottom-right of the screen to create a new cemetery.
+
+\subsection{Reload JSON template}
+If you have uploaded a JSON template file and wish to update the survey questions, click on the vertical ellipses in the top-right of the screen and select 'Reload JSON template'.
+
+\subsection{Add attribute}
+Click on the vertical ellipses in the top-right of the screen and select 'Add attribute'. In the new activity select the category on the left side of the screen that you wish to add an attribute to and click on the '+' symbol in the circle at the bottom-right of the screen to name the new attribute.
+
+\textbf{NOTE}
+
+This will backup your existing JSON template into the archive (See Section \ref{file_structure}) and add the attribute into the JSON template. Remember to use this template in the future from which to make any changes.
+
+\subsection{Data export}
+The data export will be located as described in Section \ref{file_structure}. It is important to note that the text files will be generated by exporting the internal application database, the pictures will be stored in this directory. This means that \textbf{removing pictures from this folder will mean they are no longer visible from inside the application}. The other \textbf{data will always be maintained in the internal database unless the application is uninstalled} in which case it would be wise to export the data before hand.
+
+As the relationship between categories and the number of attributes vary, a simple table is not possible. There exists one-to-one and one-to-many relationships. Exported data are therefore separated by scope (cemetery, section, grave) but also by data type (Section \ref{sec_data_types}). Data types which are one-to-one are all included together in one table file, with one row for each grave, or other scope types in separate files, and a second file contains a table where multiple rows of attributes are associated with a grave (or other scope type).
+
+\section{Cemetery}
+From the Cemetery activity you can:
+\begin{itemize}
+\item Select a section to survey
+\item Edit a section name
+\item Create a new section
+\item Take a picture
+\item Bookmark this cemetery
+\item Complete the cemetery survey
+\item View pictures associated with this cemetery
+\end{itemize}
+
+The top-right icons allow picture taking and bookmarking the cemetery. The left-side icons displays the list of (cemetery) sections, display the survey and display the pictures associated with this cemetery and survey categories and attributes.
+
+We further describe some of these actions.
+
+\subsection{Edit section name}
+While 'clicking' on a (cemetery) section name takes you to the section activity, holding down  your finger on the section name reveals an edit dialogue. Change the section name and click 'OK'.
+
+\subsection{Create a new section}
+Click on the '+' symbol in the circle at the bottom-right of the screen to create a new section.
+
+\section{Section}
+From the Section activity you can:
+\begin{itemize}
+\item Select a grave to survey
+\item Edit a grave name
+\item Create a new grave automatically or specified
+\item Take a picture
+\item Bookmark this section
+\item Complete the section survey
+\item View pictures associated with this section
+\end{itemize}
+
+The top-right icons allow picture taking and bookmarking the section. The left-side icons displays the list of graves, display the survey and display the pictures associated with this section and survey categories and attributes.
+
+We further describe some of these actions.
+
+\subsection{Edit section name}
+While 'clicking' on a grave name takes you to the section activity, holding down  your finger on the grave name reveals an edit dialogue. Change the grave name and click 'OK'.
+
+\subsection{Create a new grave}
+Click on the '+' symbol in the circle at the bottom-right of the screen to create a new grave. It will automatically create an id based on the next highest integer of grave ids. If you wish to create a new grave and specify its name simply hold the '+' symbol down and a dialogue will ask you for the grave name.
+
+\section{Grave}
+From the Grave activity you can:
+\begin{itemize}
+\item Take a picture
+\item Bookmark this grave
+\item Complete the grave survey
+\item View the pictures associated with this grave
+\item Clear all the data associated with this grave
+\end{itemize}
+
+The grave activity only displays action icons at the top-right corner of the screen. These allow you to delete all the data for this grave, bookmark the grave, take a picture of the grave, display the pictures and survey.
+
+\subsection{Clear grave}
+Clicking on the garbage icon will prompt you to see if you would like to clear all the collected data for this grave.
+
+\subsection{Complete the survey}
+Unlike the other scopes, the grave offers tabs to display the larger set of categories for the survey.
+
+\textit{When exiting the grave activity, using the back navigation, the application will check if all required fields have been completed. Pay attention to messages warning of this.}
+
+\section{Surveys}
+\label{au_surveys}
+The surveys operate similarly across the three scopes. We provide a few notes on interacting with the different data types.
+
+\subsection{Radio buttons}
+Radio buttons allow the selection of one attribute. If you desire to disable all the attributes but have already selected one, simply hold your finger down on the selected attribute. This will disable it.
+
+\subsection{Binary buttons}
+Binary buttons will not store any data by default (they are NULL) although they state 'FALSE'. If you wish to provide a FALSE value then you must first switch the state to TRUE and back to FALSE. Relying on this usage is not, however, a wise decision unless the category is defined as required, reminding the user. A better alternative is a radio button with two alternatives.
+
+\subsection{Thumbnails}
+Thumbnail icons can be enlarged by holding a finger down on the images.
+
+\chapter{File structure}
+\label{file_structure}
+The structure of the files is shown below.
+
+\begin{itemize}
+\renewcommand{\labelitemi}{\textbf{}}
+\renewcommand{\labelitemii}{\textbf{}}
+\renewcommand{\labelitemiii}{\textbf{}}
+	\item cemetery_survey_application/
+	\begin{itemize}
+		\item template/
+		\begin{itemize}
+			\item survey_template.json
+			\item archive/
+		\end{itemize}
+		\item thumbnails/
+		\begin{itemize}
+			\item Cross_shape/
+			\item Grave_type/
+			\item ....
+		\end{itemize}
+		\item export/
+		\begin{itemize}
+			\item pictures/
+			\item data/
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+
+\chapter{Problems}
+\section{Android File Transfer}
+\label{atf}
+Android File Transfer (AFT) has known issues with not displaying the current status of files on the tablet. Rebooting the tablet may be required in order to see latest pictures and exported data.
+
+
+\end{document}
