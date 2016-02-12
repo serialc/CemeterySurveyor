@@ -21,6 +21,29 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <RelativeLayout
+        android:id="@+id/json_loading_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <android.support.v4.widget.ContentLoadingProgressBar
+            android:id="@+id/spinning_loader"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminate="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/spinning_loader"
+            android:gravity="center_horizontal"
+            android:text="@string/loading_json"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </RelativeLayout>
+
     <include layout="@layout/content_main" />
 
     <android.support.design.widget.FloatingActionButton

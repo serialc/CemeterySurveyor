@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +71,7 @@ public class ScopeActivity extends AppCompatActivity {
 
     public String mFragmentTag;
     public FloatingActionButton mFab;
+    public RelativeLayout mProgressBarWheel;
 
     final Context context = this;
 
@@ -109,6 +111,7 @@ public class ScopeActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(VIEWING_STATE, mViewingState);
         //outState.putString(PHOTO_FILE_NAME, mCurrentPhotoFileName);
+        Log.d(LOG_TAG, "Saving viewing state");
         super.onSaveInstanceState(outState);
     }
 
@@ -137,6 +140,7 @@ public class ScopeActivity extends AppCompatActivity {
             // in main
             case R.id.action_reload_template:
                 // parse the JSON template
+                mProgressBarWheel.setVisibility(View.VISIBLE);
                 new templateFileParser().execute();
                 return true;
             case R.id.action_add_attribute:
@@ -188,7 +192,8 @@ public class ScopeActivity extends AppCompatActivity {
         bundle.putString(FRAGMENT_HEADING, "Cemeteries");
         bundle.putString(CLICK_BEHAVIOUR, "select");
         bundle.putString(LONG_CLICK_BEHAVIOUR, "edit");
-        // set Fragmentclass Arguments
+
+        // set Fragment class Arguments
         ListFragment listFragment = new ListFragment();
         //ListFragment listFragment = new ListFragment();
         listFragment.setArguments(bundle);
@@ -935,6 +940,7 @@ public class ScopeActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Void... empty) {
+
             // backup existing template to archive
             String result = Utility.backupTemplateFile();
             if (result != null) return result;
@@ -979,6 +985,9 @@ public class ScopeActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(getApplicationContext(), "Survey template loaded", Toast.LENGTH_SHORT).show();
             }
+
+            mProgressBarWheel.setVisibility(View.GONE);
+
             super.onPostExecute(result);
         }
 
@@ -1355,6 +1364,7 @@ public class ScopeActivity extends AppCompatActivity {
         String prefix = Utility.colNamesPrefix.DATA_COL_PREFIX;
 
         String missingRequirements = "";
+        int totalMissingRequirements = 0;
 
         while( catCursor.getPosition() < catCursor.getCount() ) {
             itemTitle = catCursor.getString(catCursor.getColumnIndex(CsDbContract.SurveyCategoryEntry.COLUMN_TITLE));
@@ -1376,11 +1386,15 @@ public class ScopeActivity extends AppCompatActivity {
                 );
 
                 if( !attCursor.moveToFirst() ) {
-                    // no data for this required field
-                    if(!missingRequirements.equals("")) {
-                        missingRequirements += "\nThe '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
-                    } else {
-                        missingRequirements += "The '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
+                    totalMissingRequirements += 1;
+                    // only record the first 3 messages for the user
+                    if( totalMissingRequirements < 4 ) {
+                        // no data for this required field
+                        if(!missingRequirements.equals("")) {
+                            missingRequirements += "\nThe '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
+                        } else {
+                            missingRequirements += "The '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
+                        }
                     }
                 }
 
@@ -1389,10 +1403,14 @@ public class ScopeActivity extends AppCompatActivity {
             } else {
                 // measurement, binary, radio, text
                 if (graveCursor.getString(graveCursor.getColumnIndex(combinedColName)) == null) {
-                    if(!missingRequirements.equals("")) {
-                        missingRequirements += "\nThe '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
-                    } else {
-                        missingRequirements += "The '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
+                    totalMissingRequirements += 1;
+                    // only record the first 3 messages for the user
+                    if( totalMissingRequirements < 4 ) {
+                        if(!missingRequirements.equals("")) {
+                            missingRequirements += "\nThe '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
+                        } else {
+                            missingRequirements += "The '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
+                        }
                     }
                 }
             }
@@ -1401,6 +1419,9 @@ public class ScopeActivity extends AppCompatActivity {
         }
 
         if( !missingRequirements.equals("") ) {
+            if( totalMissingRequirements > 3 ) {
+                missingRequirements += "\nAn additional " + (totalMissingRequirements - 3) + " categories are also missing.";
+            }
             Toast.makeText(this, missingRequirements, Toast.LENGTH_LONG).show();
         }
 

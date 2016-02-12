@@ -20,5 +20,7 @@
     <string name="clear_grave_attributes">Clear all grave attributes</string>
     <string name="title_activity_attribute_adder">Add attribute</string>
 
+    <string name="loading_json">Loading and parsing\nJSON survey template</string>
+
     <string name="required_field">*</string>
 </resources>

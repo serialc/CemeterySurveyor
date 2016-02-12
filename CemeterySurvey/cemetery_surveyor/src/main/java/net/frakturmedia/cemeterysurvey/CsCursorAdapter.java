@@ -199,9 +199,9 @@ public class CsCursorAdapter extends CursorAdapter {
                         // Cemetery
                         body += cursor.getString(4) == null ? "" : cursor.getString(4);
                         // Section
-                        body += cursor.getString(5) == null ? "" : cursor.getString(5);
+                        body += cursor.getString(5) == null ? "" : " " + cursor.getString(5);
                         // Grave
-                        body += cursor.getString(6) == null ? "" : cursor.getString(6);
+                        body += cursor.getString(6) == null ? "" : " " + cursor.getString(6);
 
                         String categoryAttribute = "";
                         // Category
@@ -454,7 +454,7 @@ public class CsCursorAdapter extends CursorAdapter {
 
                     // See if we can reduce the colNum by redistributing:
                     // With six elements, have 3 on each row rather than 4 and 2
-                    int resultingRowNum  = (int) ((attCursorRowCount / (double)colNum) + 1);
+                    int resultingRowNum  = (int) ((attCursorRowCount / (double)colNum) + .99);
 
                     while( ((int) ((attCursorRowCount / (double)(colNum - 1)) + .99) ) == resultingRowNum ) {
                         colNum -= 1;
