@@ -110,8 +110,6 @@ public class ScopeActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(VIEWING_STATE, mViewingState);
-        //outState.putString(PHOTO_FILE_NAME, mCurrentPhotoFileName);
-        Log.d(LOG_TAG, "Saving viewing state");
         super.onSaveInstanceState(outState);
     }
 
@@ -1252,13 +1250,13 @@ public class ScopeActivity extends AppCompatActivity {
         // export all the data to a date-time stamped file in export
 
         String[][] exportList = new String[][]{
-                {CsDbContract.CemeteryEntry.CONTENT_URI.toString(), "cemetery.csv"},
-                {CsDbContract.SectionEntry.CONTENT_URI.toString(), "section.csv"},
-                {CsDbContract.GraveEntry.CONTENT_URI.toString(), "grave.csv"},
-                {CsDbContract.CemeteryAttributesEntry.CONTENT_URI.toString(), "cemetery_attributes.csv"},
-                {CsDbContract.SectionAttributesEntry.CONTENT_URI.toString(), "section_attributes.csv"},
-                {CsDbContract.GraveAttributesEntry.CONTENT_URI.toString(), "grave_attributes.csv"},
-                {CsDbContract.PictureEntry.CONTENT_URI.toString(), "pictures.csv"}
+                {CsDbContract.CemeteryEntry.CONTENT_URI.toString() + "/export", "cemetery.csv"},
+                {CsDbContract.SectionEntry.CONTENT_URI.toString() + "/export", "section.csv"},
+                {CsDbContract.GraveEntry.CONTENT_URI.toString() + "/export", "grave.csv"},
+                {CsDbContract.CemeteryAttributesEntry.CONTENT_URI.toString() + "/export", "cemetery_attributes.csv"},
+                {CsDbContract.SectionAttributesEntry.CONTENT_URI.toString() + "/export", "section_attributes.csv"},
+                {CsDbContract.GraveAttributesEntry.CONTENT_URI.toString() + "/export", "grave_attributes.csv"},
+                {CsDbContract.PictureEntry.CONTENT_URI.toString() + "/export", "pictures.csv"}
         };
 
         for (int f = 0; f < exportList.length; f++) {

@@ -25,32 +25,38 @@ public class CsProvider extends ContentProvider {
 
     static final int CEMETERY = 100;
     static final int CEMETERY_ID = 101;
+    static final int CEMETERY_EXPORT = 109;
 
     static final int CEMETERY_ATTRIBUTE = 150;
     static final int CEMETERY_ATTRIBUTE_FOR_CEMETERYID_CATEGORY = 151;
     static final int CEMETERY_ATTRIBUTE_FOR_CEMETERYID = 152;
     static final int CEMETERY_ATTRIBUTE_FOR_CEMETERYID_CATEGORY_ATTRIBUTE = 153;
+    static final int CEMETERY_ATTRIBUTE_EXPORT = 159;
 
     static final int SECTION = 200;
     static final int SECTION_ID = 201;
     static final int SECTIONS_FROM_CEMETERY_ID = 202;
     static final int SECTION_ID_NAMES = 203;
+    static final int SECTION_EXPORT = 209;
 
     static final int SECTION_ATTRIBUTE = 250;
     static final int SECTION_ATTRIBUTE_FOR_SECTIONID_CATEGORY = 251;
     static final int SECTION_ATTRIBUTE_FOR_SECTIONID = 252;
     static final int SECTION_ATTRIBUTE_FOR_SECTIONID_CATEGORY_ATTRIBUTE = 253;
+    static final int SECTION_ATTRIBUTE_EXPORT = 259;
 
     static final int GRAVE = 300;
     static final int GRAVE_ID = 301;
     static final int GRAVES_FROM_SECTION_ID = 302;
     static final int GRAVE_ID_NAMES = 303;
+    static final int GRAVE_EXPORT = 309;
 
     static final int GRAVE_ATTRIBUTE = 350;
     static final int GRAVE_ATTRIBUTE_FOR_GRAVEID_CATEGORY = 351;
     static final int GRAVE_ATTRIBUTE_FOR_GRAVEID = 352;
     static final int GRAVE_CLEAR_FOR_GRAVEID = 353;
     static final int GRAVE_ATTRIBUTE_FOR_GRAVEID_CATEGORY_ATTRIBUTE = 354;
+    static final int GRAVE_ATTRIBUTE_EXPORT = 359;
 
     static final int BOOKMARK = 400;
     static final int BOOKMARK_WITH_NAMES = 401;
@@ -59,6 +65,7 @@ public class CsProvider extends ContentProvider {
     static final int PICTURE = 500;
     static final int PICTURE_WITH_NAMES = 501;
     static final int PICTURE_ID_SCOPE = 502;
+    static final int PICTURE_EXPORT = 509;
 
     static final int SURVEY = 600;
     static final int SURVEY_FOR_SCOPE_ID_TAB_NUM = 601;
@@ -338,7 +345,8 @@ public class CsProvider extends ContentProvider {
                         "G." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME,
                         "P." + CsDbContract.PictureEntry.COLUMN_CATEGORY_NAME,
                         "P." + CsDbContract.PictureEntry.COLUMN_ATTRIBUTE_NAME,
-                        "P." + CsDbContract.PictureEntry.COLUMN_FILE_NAME
+                        "P." + CsDbContract.PictureEntry.COLUMN_FILE_NAME,
+                        "P." + CsDbContract.PictureEntry.COLUMN_SCOPE
                 },
                 selection, // selection
                 selectionArgs, // selectionArgs
@@ -443,29 +451,35 @@ public class CsProvider extends ContentProvider {
 
         matcher.addURI(authority, CsDbContract.PATH_CEMETERY, CEMETERY);
         matcher.addURI(authority, CsDbContract.PATH_CEMETERY + "/#", CEMETERY_ID);
+        matcher.addURI(authority, CsDbContract.PATH_CEMETERY + "/export", CEMETERY_EXPORT);
 
         matcher.addURI(authority, CsDbContract.PATH_CEMETERY_ATTRIBUTES, CEMETERY_ATTRIBUTE);
         matcher.addURI(authority, CsDbContract.PATH_CEMETERY_ATTRIBUTES + "/#", CEMETERY_ATTRIBUTE_FOR_CEMETERYID);
         matcher.addURI(authority, CsDbContract.PATH_CEMETERY_ATTRIBUTES + "/#/*/*", CEMETERY_ATTRIBUTE_FOR_CEMETERYID_CATEGORY_ATTRIBUTE);
+        matcher.addURI(authority, CsDbContract.PATH_CEMETERY_ATTRIBUTES + "/export", CEMETERY_ATTRIBUTE_EXPORT);
 
         matcher.addURI(authority, CsDbContract.PATH_SECTION, SECTION);
         matcher.addURI(authority, CsDbContract.PATH_SECTION + "/#", SECTION_ID);
         matcher.addURI(authority, CsDbContract.PATH_SECTION + "/" + CsDbContract.PATH_CEMETERY + "/#", SECTIONS_FROM_CEMETERY_ID);
         matcher.addURI(authority, CsDbContract.PATH_SECTION + "/joined", SECTION_ID_NAMES);
+        matcher.addURI(authority, CsDbContract.PATH_SECTION + "/export", SECTION_EXPORT);
 
         matcher.addURI(authority, CsDbContract.PATH_SECTION_ATTRIBUTES, SECTION_ATTRIBUTE);
         matcher.addURI(authority, CsDbContract.PATH_SECTION_ATTRIBUTES + "/#", SECTION_ATTRIBUTE_FOR_SECTIONID);
         matcher.addURI(authority, CsDbContract.PATH_SECTION_ATTRIBUTES + "/#/*/*", SECTION_ATTRIBUTE_FOR_SECTIONID_CATEGORY_ATTRIBUTE);
+        matcher.addURI(authority, CsDbContract.PATH_SECTION_ATTRIBUTES + "/export", SECTION_ATTRIBUTE_EXPORT);
 
         matcher.addURI(authority, CsDbContract.PATH_GRAVE, GRAVE);
         matcher.addURI(authority, CsDbContract.PATH_GRAVE + "/#", GRAVE_ID);
         matcher.addURI(authority, CsDbContract.PATH_GRAVE + "/" + CsDbContract.PATH_SECTION + "/#", GRAVES_FROM_SECTION_ID);
         matcher.addURI(authority, CsDbContract.PATH_GRAVE + "/joined", GRAVE_ID_NAMES);
         matcher.addURI(authority, CsDbContract.PATH_GRAVE + "/#/clear", GRAVE_CLEAR_FOR_GRAVEID);
+        matcher.addURI(authority, CsDbContract.PATH_GRAVE + "/export", GRAVE_EXPORT);
 
         matcher.addURI(authority, CsDbContract.PATH_GRAVE_ATTRIBUTES, GRAVE_ATTRIBUTE);
         matcher.addURI(authority, CsDbContract.PATH_GRAVE_ATTRIBUTES + "/#", GRAVE_ATTRIBUTE_FOR_GRAVEID);
         matcher.addURI(authority, CsDbContract.PATH_GRAVE_ATTRIBUTES + "/#/*/*", GRAVE_ATTRIBUTE_FOR_GRAVEID_CATEGORY_ATTRIBUTE);
+        matcher.addURI(authority, CsDbContract.PATH_GRAVE_ATTRIBUTES + "/export", GRAVE_ATTRIBUTE_EXPORT);
 
         matcher.addURI(authority, CsDbContract.PATH_BOOKMARK, BOOKMARK);
         matcher.addURI(authority, CsDbContract.PATH_BOOKMARK + "/joined", BOOKMARK_WITH_NAMES);
@@ -474,6 +488,7 @@ public class CsProvider extends ContentProvider {
         matcher.addURI(authority, CsDbContract.PATH_PICTURE, PICTURE);
         matcher.addURI(authority, CsDbContract.PATH_PICTURE + "/joined", PICTURE_WITH_NAMES);
         matcher.addURI(authority, CsDbContract.PATH_PICTURE + "/#/*", PICTURE_ID_SCOPE);
+        matcher.addURI(authority, CsDbContract.PATH_PICTURE + "/export", PICTURE_EXPORT);
 
         matcher.addURI(authority, CsDbContract.PATH_SURVEY_CATEGORY, SURVEY);
 //        matcher.addURI(authority, CsDbContract.PATH_SURVEY_CATEGORY + "/*/joined", SURVEY_FOR_SCOPE_JOIN_ATTRIBUTES);
@@ -885,6 +900,147 @@ public class CsProvider extends ContentProvider {
                         null, null, // group by, having
                         CsDbContract.SurveyAttributeEntry.COLUMN_ORDER + " ASC"
                 );
+                break;
+
+            // Exporting of data, replaces ids with names
+            case CEMETERY_EXPORT:
+                // This is normal, a duplicate of the simple CEMETERY case but added for consitency
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        CsDbContract.CemeteryEntry.TABLE_NAME,
+                        projection, // columns
+                        selection, selectionArgs, // selection, selectionArgs
+                        null, null, // group by, having
+                        sortOrder
+                );
+
+                break;
+            case SECTION_EXPORT:
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        "SELECT C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                "S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
+                                " S.* " +
+                                " FROM " + CsDbContract.SectionEntry.TABLE_NAME + " AS S " +
+                                " LEFT JOIN " +
+                                " (SELECT " + CsDbContract.CemeteryEntry._ID + ", " +
+                                CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + " " +
+                                " FROM " +
+                                CsDbContract.CemeteryEntry.TABLE_NAME + ") AS C " +
+                                " ON S." + CsDbContract.SectionEntry.COLUMN_CEMETERY_ID + " = " +
+                                " C." + CsDbContract.CemeteryEntry._ID +
+                                " ORDER BY C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + " ASC",
+                        null // '?' values to pass into query
+                );
+                break;
+            case GRAVE_EXPORT:
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        "SELECT C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
+                                " G." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + ", " +
+                                " G.* FROM " + CsDbContract.GraveEntry.TABLE_NAME + " AS G " +
+
+                                " LEFT JOIN " +
+                                " (SELECT " + CsDbContract.CemeteryEntry._ID + ", " +
+                                CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + " " +
+                                " FROM " +
+                                CsDbContract.CemeteryEntry.TABLE_NAME + ") AS C " +
+                                " ON G." + CsDbContract.GraveEntry.COLUMN_CEMETERY_ID + " = " +
+                                " C." + CsDbContract.CemeteryEntry._ID +
+
+                                " LEFT JOIN " +
+                                " (SELECT " + CsDbContract.SectionEntry._ID + ", " +
+                                CsDbContract.SectionEntry.COLUMN_SECTION_NAME + " " +
+                                " FROM " +
+                                CsDbContract.SectionEntry.TABLE_NAME + ") AS S " +
+                                " ON G." + CsDbContract.GraveEntry.COLUMN_SECTION_ID + " = " +
+                                " S." + CsDbContract.SectionEntry._ID +
+
+                                " ORDER BY C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
+                                " G." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + " ASC",
+                        null // '?' values to pass into query
+                );
+                break;
+            case CEMETERY_ATTRIBUTE_EXPORT:
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        "SELECT C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " CA.* " +
+                                " FROM " + CsDbContract.CemeteryAttributesEntry.TABLE_NAME + " AS CA " +
+
+                                " LEFT JOIN " +
+                                " (SELECT " + CsDbContract.CemeteryEntry._ID + ", " +
+                                CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + " " +
+                                " FROM " +
+                                CsDbContract.CemeteryEntry.TABLE_NAME + ") AS C " +
+                                " ON CA." + CsDbContract.CemeteryAttributesEntry.COLUMN_CEMETERY_ID + " = " +
+                                " C." + CsDbContract.CemeteryEntry._ID +
+
+                                " ORDER BY C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " CA." + CsDbContract.CemeteryAttributesEntry.COLUMN_CATEGORY_NAME + " ASC",
+                        null // '?' values to pass into query
+                );
+                break;
+            case SECTION_ATTRIBUTE_EXPORT:
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        "SELECT SC." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " SC." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
+                                " SA.* " +
+                                " FROM " + CsDbContract.SectionAttributesEntry.TABLE_NAME + " AS SA " +
+
+                                " LEFT JOIN " +
+                                " (SELECT S." + CsDbContract.SectionEntry._ID + ", " +
+                                " C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + " " +
+                                " FROM " +
+                                CsDbContract.SectionEntry.TABLE_NAME + " AS S " +
+                                " LEFT JOIN " +
+                                CsDbContract.CemeteryEntry.TABLE_NAME + " AS C " +
+                                " ON S." + CsDbContract.SectionEntry.COLUMN_CEMETERY_ID + " = " +
+                                " C." + CsDbContract.CemeteryEntry._ID + ") AS SC " +
+                                " ON SA." + CsDbContract.SectionAttributesEntry.COLUMN_SECTION_ID + " = " +
+                                " SC." + CsDbContract.SectionEntry._ID +
+
+                                " ORDER BY SC." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " SC." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
+                                " SA." + CsDbContract.SectionAttributesEntry.COLUMN_CATEGORY_NAME + " ASC",
+                        null // '?' values to pass into query
+                );
+                break;
+            case GRAVE_ATTRIBUTE_EXPORT:
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        "SELECT SCG." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " SCG." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
+                                " SCG." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + ", " +
+                                " GA.* " +
+                                " FROM " + CsDbContract.GraveAttributesEntry.TABLE_NAME + " AS GA " +
+
+                                " LEFT JOIN " +
+                                " (SELECT G." + CsDbContract.GraveEntry._ID + ", " +
+                                " C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
+                                " G." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + " " +
+                                " FROM " +
+                                CsDbContract.GraveEntry.TABLE_NAME + " AS G " +
+                                " LEFT JOIN " +
+                                CsDbContract.CemeteryEntry.TABLE_NAME + " AS C " +
+                                " ON G." + CsDbContract.GraveEntry.COLUMN_CEMETERY_ID + " = " +
+                                " C." + CsDbContract.CemeteryEntry._ID + " " +
+                                " LEFT JOIN " +
+                                CsDbContract.SectionEntry.TABLE_NAME + " AS S " +
+                                " ON G." + CsDbContract.GraveEntry.COLUMN_SECTION_ID + " = " +
+                                " S." + CsDbContract.SectionEntry._ID + ") AS SCG " +
+                                " ON GA." + CsDbContract.GraveAttributesEntry.COLUMN_GRAVE_ID + " = " +
+                                " SCG." + CsDbContract.GraveEntry._ID +
+
+                                " ORDER BY SCG." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                                " SCG." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
+                                " SCG." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + ", " +
+                                " GA." + CsDbContract.SectionAttributesEntry.COLUMN_CATEGORY_NAME + " ASC",
+                        null // '?' values to pass into query
+                );
+                break;
+            case PICTURE_EXPORT:
+                retCursor = getPictureScopeNames(uri, projection, selection, selectionArgs, sortOrder);
                 break;
 
             default:
