@@ -1058,7 +1058,7 @@ public class ScopeActivity extends AppCompatActivity {
                         }
 
                         groupNum += 1;
-                        groupName = jsonObject.has(TITLE) ? jsonObject.getString(TITLE) : "_blank";
+                        groupName = (jsonObject.has(TITLE) && !jsonObject.getString(TITLE).equals("")) ? jsonObject.getString(TITLE) : "_blank";
 
                         results = recursiveJsonParser(itemType, jsonObject.getJSONArray(CONTENTS), scope, tabNum, groupNum, categoryNum, tabName, groupName);
                         if (results != null) return results;
@@ -1085,7 +1085,7 @@ public class ScopeActivity extends AppCompatActivity {
                         // If the itemDataType is THUMBNAIL:
                         // get the directory name containing the pictures in Utility.dataPaths.THUMBNAILS
                         String dirName = "";
-                        if (itemDataType.equals(Utility.surveyDataTypes.THUMBNAIL)) {
+                        if (itemDataType.equals(Utility.surveyDataTypes.THUMBNAIL) || itemDataType.equals(Utility.surveyDataTypes.RADIO_THUMBNAIL)) {
                             dirName = jsonObject.getString(ATTRIBUTES);
                         }
 
@@ -1132,30 +1132,36 @@ public class ScopeActivity extends AppCompatActivity {
                         Uri surveyUri = getContentResolver().insert(CsDbContract.SurveyCategoryEntry.CONTENT_URI, cv);
                         Long surveyId = CsDbContract.SurveyCategoryEntry.getSurveyIdFromUri(surveyUri);
 
-                        // Add column to scope data table;
-                        // check column name exists (with prefix 'd_' and postfix '_' + itemDataType
-                        String newColName = DATA_COL_PREFIX + itemName + "_" + itemDataType;
-                        switch (scope) {
-                            case CEMETERY:
-                                if (!tableColumnExists(CsDbContract.CemeteryEntry.CONTENT_URI, newColName)) {
-                                    createColumn(CsDbContract.CemeteryEntry.TABLE_NAME, newColName, itemDataType);
-                                    Log.d(LOG_TAG, "The column " + newColName + " DOES NOT exist in cemetery. CREATED.");
-                                }
-                                break;
-                            case SECTION:
-                                if (!tableColumnExists(CsDbContract.SectionEntry.CONTENT_URI, newColName)) {
-                                    createColumn(CsDbContract.SectionEntry.TABLE_NAME, newColName, itemDataType);
-                                    Log.d(LOG_TAG, "The column " + newColName + " DOES NOT exist in section. CREATED.");
-                                }
-                                break;
-                            case GRAVE:
-                                if (!tableColumnExists(CsDbContract.GraveEntry.CONTENT_URI, newColName)) {
-                                    createColumn(CsDbContract.GraveEntry.TABLE_NAME, newColName, itemDataType);
-                                    Log.d(LOG_TAG, "The column " + newColName + " DOES NOT exist in grave. CREATED.");
-                                }
-                                break;
-                            default:
-                                throw new UnsupportedOperationException("Unexpected scope type: " + scope);
+                        // Add column to scope data table for items with one value (radio, measurement, text, radio_thumbnail)
+                        if( itemDataType.equals(Utility.surveyDataTypes.TEXT) ||
+                                itemDataType.equals(Utility.surveyDataTypes.MEASUREMENT) ||
+                                itemDataType.equals(Utility.surveyDataTypes.RADIO) ||
+                                itemDataType.equals(Utility.surveyDataTypes.RADIO_THUMBNAIL)
+                                ) {
+                            // check column name exists (with prefix 'd_' and postfix '_' + itemDataType
+                            String newColName = DATA_COL_PREFIX + itemName + "_" + itemDataType;
+                            switch (scope) {
+                                case CEMETERY:
+                                    if (!tableColumnExists(CsDbContract.CemeteryEntry.CONTENT_URI, newColName)) {
+                                        createColumn(CsDbContract.CemeteryEntry.TABLE_NAME, newColName, itemDataType);
+                                        Log.d(LOG_TAG, "The column " + newColName + " DOES NOT exist in cemetery. CREATED.");
+                                    }
+                                    break;
+                                case SECTION:
+                                    if (!tableColumnExists(CsDbContract.SectionEntry.CONTENT_URI, newColName)) {
+                                        createColumn(CsDbContract.SectionEntry.TABLE_NAME, newColName, itemDataType);
+                                        Log.d(LOG_TAG, "The column " + newColName + " DOES NOT exist in section. CREATED.");
+                                    }
+                                    break;
+                                case GRAVE:
+                                    if (!tableColumnExists(CsDbContract.GraveEntry.CONTENT_URI, newColName)) {
+                                        createColumn(CsDbContract.GraveEntry.TABLE_NAME, newColName, itemDataType);
+                                        Log.d(LOG_TAG, "The column " + newColName + " DOES NOT exist in grave. CREATED.");
+                                    }
+                                    break;
+                                default:
+                                    throw new UnsupportedOperationException("Unexpected scope type: " + scope);
+                            }
                         }
 
                         // Submit to SurveyCategory table
@@ -1168,8 +1174,9 @@ public class ScopeActivity extends AppCompatActivity {
                                 return "Template loading failed: Unable to parse the survey Template. The " + itemName + "'s '" + ATTRIBUTES + "' descriptor is missing";
                             }
 
+                            // For radio, set, radio_thumbnails and thumbnails save the attribute values
                             Vector<ContentValues> contentValuesVector;
-                            if (itemDataType.equals(Utility.surveyDataTypes.THUMBNAIL)) {
+                            if (itemDataType.equals(Utility.surveyDataTypes.THUMBNAIL) || itemDataType.equals(Utility.surveyDataTypes.RADIO_THUMBNAIL)) {
 
                                 // get list of files in Utility.dataPaths.THUMBNAILS + "/" + dirName
                                 File folder = new File(Utility.dataPaths.THUMBNAILS + "/" + dirName);
@@ -1211,7 +1218,6 @@ public class ScopeActivity extends AppCompatActivity {
                                     File small_picture = new File(dst_path);
                                     if( !small_picture.exists() ) {
 
-
                                         // Get the width/height of the image
                                         BitmapFactory.Options options = new BitmapFactory.Options();
                                         options.inJustDecodeBounds = true;
@@ -1247,6 +1253,7 @@ public class ScopeActivity extends AppCompatActivity {
                                 }
 
                             } else {
+                                // RADIO and SET
                                 // Get JSONArray with attributes
                                 JSONArray jsonAttributes = jsonObject.getJSONArray(ATTRIBUTES);
 
@@ -1426,6 +1433,7 @@ public class ScopeActivity extends AppCompatActivity {
 
         String missingRequirements = "";
         int totalMissingRequirements = 0;
+        int displayMissingReqLimit = 4;
 
         while( catCursor.getPosition() < catCursor.getCount() ) {
             itemTitle = catCursor.getString(catCursor.getColumnIndex(CsDbContract.SurveyCategoryEntry.COLUMN_TITLE));
@@ -1449,7 +1457,7 @@ public class ScopeActivity extends AppCompatActivity {
                 if( !attCursor.moveToFirst() ) {
                     totalMissingRequirements += 1;
                     // only record the first 3 messages for the user
-                    if( totalMissingRequirements < 4 ) {
+                    if( totalMissingRequirements <= displayMissingReqLimit ) {
                         // no data for this required field
                         if(!missingRequirements.equals("")) {
                             missingRequirements += "\nThe '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
@@ -1466,11 +1474,11 @@ public class ScopeActivity extends AppCompatActivity {
                 if (graveCursor.getString(graveCursor.getColumnIndex(combinedColName)) == null) {
                     totalMissingRequirements += 1;
                     // only record the first 3 messages for the user
-                    if( totalMissingRequirements < 4 ) {
+                    if( totalMissingRequirements <= displayMissingReqLimit ) {
                         if(!missingRequirements.equals("")) {
-                            missingRequirements += "\nThe '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
+                            missingRequirements += "\n" + itemTitle + " [" + itemDataType + "]";
                         } else {
-                            missingRequirements += "The '" + itemTitle + "' category of type '" + itemDataType + "' has not been completed for " + scope + " " + scopeName + ".";
+                            missingRequirements += itemTitle + " [" + itemDataType + "]";
                         }
                     }
                 }
@@ -1481,9 +1489,32 @@ public class ScopeActivity extends AppCompatActivity {
 
         if( !missingRequirements.equals("") ) {
             if( totalMissingRequirements > 3 ) {
-                missingRequirements += "\nAn additional " + (totalMissingRequirements - 3) + " categories are also missing.";
+                missingRequirements += "\n\nAn additional " + (totalMissingRequirements - displayMissingReqLimit) + " categories are also missing.";
             }
-            Toast.makeText(this, missingRequirements, Toast.LENGTH_LONG).show();
+
+            // create Alert Dialogue Builder
+            AlertDialog.Builder adb = new AlertDialog.Builder(context);
+            LayoutInflater li = LayoutInflater.from(context);
+            View infoView = li.inflate(R.layout.info_dialog, null);
+            adb.setView(infoView);
+
+            final TextView textViewHeading = (TextView) infoView.findViewById(R.id.edit_text_dialog_heading);
+            final TextView textViewMessage = (TextView) infoView.findViewById(R.id.textview_dialog_message);
+            textViewHeading.setText("Missing required fields for " + scope + " " + scopeName);
+            textViewMessage.setText(missingRequirements);
+
+            adb.setCancelable(false).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+
+                }
+            });
+
+            // build/prompt user
+            AlertDialog alertDialog = adb.create();
+            alertDialog.show();
+
+//            Toast.makeText(this, missingRequirements, Toast.LENGTH_LONG).show();
         }
 
         graveCursor.close();

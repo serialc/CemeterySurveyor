@@ -415,6 +415,7 @@ public class CsCursorAdapter extends CursorAdapter {
             case Utility.surveyDataTypes.RADIO:
             case Utility.surveyDataTypes.SET:
             case Utility.surveyDataTypes.THUMBNAIL:
+            case Utility.surveyDataTypes.RADIO_THUMBNAIL:
                 // Show category catTitle heading
                 surveyViewHolder.categoryNameTextView.setText(catTitle);
                 surveyViewHolder.categoryNameTextView.setVisibility(View.VISIBLE);
@@ -435,7 +436,7 @@ public class CsCursorAdapter extends CursorAdapter {
 
                     // The radio data type is different as it only stores ONE value in the main cursor - not the attCursor
                     String radioSelection = null;
-                    if( catType.equals(Utility.surveyDataTypes.RADIO) ) {
+                    if( catType.equals(Utility.surveyDataTypes.RADIO) || catType.equals(Utility.surveyDataTypes.RADIO_THUMBNAIL) ) {
                         // get the attribute name for the selected radio attribute
                         radioSelection = scopeCursor.getString(scopeCursor.getColumnIndex(catFullName));
                     }
@@ -448,7 +449,7 @@ public class CsCursorAdapter extends CursorAdapter {
 
                     int colNum = context.getResources().getInteger(R.integer.grid_view_colnum);
                     // Use different number of columns for thumbnails
-                    if( catType.equals(Utility.surveyDataTypes.THUMBNAIL) ) {
+                    if( catType.equals(Utility.surveyDataTypes.THUMBNAIL) || catType.equals(Utility.surveyDataTypes.RADIO_THUMBNAIL)) {
                         colNum = context.getResources().getInteger(R.integer.grid_view_colnum_dense);
                     }
 
@@ -481,6 +482,96 @@ public class CsCursorAdapter extends CursorAdapter {
 
                             // inflate the survey_list_item_attribute and attach it to the linearLayout
                             switch (catType) {
+
+                                // RADIO_THUMBNAIL
+                                case Utility.surveyDataTypes.RADIO_THUMBNAIL: {
+                                    attView = inflater.inflate(R.layout.survey_list_item_attribute_image, attributesLayout, false);
+                                    final ImageButton attImage = (ImageButton) attView.findViewById(R.id.imagebutton_survey_attribute_thumbnail);
+
+                                    final String picturePath = Utility.dataPaths.THUMBNAILS_SMALL + "/" + catThumbDir + "/" + attName;
+                                    final File pictureFile = new File(picturePath);
+                                    final File pictureFileFullSize = new File(Utility.dataPaths.THUMBNAILS + "/" + catThumbDir + "/" + attName);
+
+                                    // Use the raw image
+//                                    attImage.setImageURI(Uri.parse(picturePath));
+
+                                    // Resample image to get bit for destined size
+                                    if (pictureFile.exists()) {
+                                        // define the resolution options
+                                        BitmapFactory.Options options = new BitmapFactory.Options();
+                                        options.inJustDecodeBounds = true;
+                                        BitmapFactory.decodeFile(picturePath, options);
+                                        // Calculate inSampleSize
+                                        options.inSampleSize = calculateInSampleSize(options, context.getResources().getInteger(R.integer.picture_size), context.getResources().getInteger(R.integer.thumbnail_size_dense));
+                                        // Decode bitmap with inSampleSize set
+                                        options.inJustDecodeBounds = false;
+
+                                        attImage.setImageBitmap(BitmapFactory.decodeFile(picturePath, options));
+                                    } else {
+                                        Log.e(LOG_TAG, "Could not find picture " + pictureFile.toString());
+                                    }
+
+                                    // Check if it should be displayed as selected
+                                    if( radioSelection != null && radioSelection.equals(attName)) {
+                                        attImage.setSelected(true);
+                                        attImage.setColorFilter(view.getResources().getColor(R.color.sunshine_light_blue), PorterDuff.Mode.MULTIPLY);
+                                    } else {
+                                        attImage.clearColorFilter();
+                                    }
+
+                                    final boolean sIsSelected = attImage.isSelected();
+
+                                    // set onclick handler
+                                    attImage.setOnClickListener(new View.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(View v) {
+
+                                            // UPDATE
+                                            ContentValues cv = new ContentValues();
+
+
+                                            int updatedRows;
+                                            if( sIsSelected ) {
+                                                // update the column
+                                                cv.putNull(catFullName);
+                                                updatedRows = v.getContext().getContentResolver().update(getScopeUri(scope),
+                                                        cv,  // content values
+                                                        " _id = ? ", // select
+                                                        new String[]{scopeIdStr}); // selectArgs
+                                            } else {
+                                                // update the column
+                                                cv.put(catFullName, attName);
+                                                updatedRows = v.getContext().getContentResolver().update(getScopeUri(scope),
+                                                        cv,  // content values
+                                                        " _id = ? ", // select
+                                                        new String[]{scopeIdStr}); // selectArgs
+                                            }
+
+                                            if (updatedRows != 1) {
+                                                Log.e(LOG_TAG, "Updated number of rows is problematic=" + updatedRows);
+                                            }
+                                            Log.d(LOG_TAG, "Rows updated for radio_thumbnail button = " + updatedRows);
+
+                                            notifyDataSetChanged();
+                                        }
+                                    });
+
+                                    attImage.setOnLongClickListener(new View.OnLongClickListener() {
+
+                                        @Override
+                                        public boolean onLongClick(View v) {
+
+                                            Intent showThumbnail = new Intent(Intent.ACTION_VIEW);
+                                            showThumbnail.setDataAndType(Uri.fromFile(pictureFileFullSize), "image/*");
+                                            v.getContext().startActivity(showThumbnail);
+
+                                            return true;
+                                        }
+                                    });
+
+                                    break;
+                                }
 
                                 // THUMBNAIL
                                 case Utility.surveyDataTypes.THUMBNAIL: {
@@ -629,7 +720,7 @@ public class CsCursorAdapter extends CursorAdapter {
                                             if (updatedRows != 1) {
                                                 Log.e(LOG_TAG, "Updated number of rows is problematic=" + updatedRows);
                                             }
-                                            Log.d(LOG_TAG, "Rows updated for set button = " + updatedRows);
+                                            Log.d(LOG_TAG, "Rows updated for radio button = " + updatedRows);
 
                                             notifyDataSetChanged();
                                         }

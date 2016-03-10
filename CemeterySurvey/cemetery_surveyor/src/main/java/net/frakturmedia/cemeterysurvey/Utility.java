@@ -41,11 +41,14 @@ public abstract class Utility {
         public static final String SET = "set";
         public static final String THUMBNAIL = "set_thumbnail";
         public static final String RADIO = "radio";
+        public static final String RADIO_THUMBNAIL = "radio_thumbnail";
         public static final String BINARY = "binary";
         public static final String TEXT = "text";
         public static final String MEASUREMENT = "measurement";
+
         public static final String[] typeList = new String[]{
-            SET, THUMBNAIL, RADIO, BINARY, TEXT, MEASUREMENT};
+            SET, THUMBNAIL, RADIO, RADIO_THUMBNAIL, BINARY, TEXT, MEASUREMENT
+        };
     }
 
     public static class resultCodes {
