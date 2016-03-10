@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -661,7 +663,7 @@ public class ScopeActivity extends AppCompatActivity {
                     try {
                         file.createNewFile();
                     } catch (java.io.IOException ex) {
-                        Log.e(LOG_TAG, "Failed creation of .nomedia file in pictures.");
+                        Log.e(LOG_TAG, "Failed creation of .nomedia file in " + Utility.dataPaths.EXPORT_NOMEDIA + ".");
                     }
                 }
 
@@ -671,7 +673,17 @@ public class ScopeActivity extends AppCompatActivity {
                     try {
                         file.createNewFile();
                     } catch (java.io.IOException ex) {
-                        Log.e(LOG_TAG, "Failed creation of .nomedia file in pictures.");
+                        Log.e(LOG_TAG, "Failed creation of .nomedia file in " + Utility.dataPaths.THUMBNAILS_NOMEDIA + ".");
+                    }
+                }
+
+                // check if the .nomedia file exists in Utility.dataPaths.THUMBNAILS_NOMEDIA, else it
+                file = new File(Utility.dataPaths.THUMBNAILS_SMALL_NOMEDIA);
+                if (!file.exists()) {
+                    try {
+                        file.createNewFile();
+                    } catch (java.io.IOException ex) {
+                        Log.e(LOG_TAG, "Failed creation of .nomedia file in " + Utility.dataPaths.THUMBNAILS_SMALL_NOMEDIA + ".");
                     }
                 }
             }
@@ -1181,6 +1193,57 @@ public class ScopeActivity extends AppCompatActivity {
                                     attributeCv.put(CsDbContract.SurveyAttributeEntry.COLUMN_ORDER, indexCounter);
 
                                     contentValuesVector.add(attributeCv);
+
+                                    // Check that a resized version of the file exists in Utility.dataPaths.THUMBNAILS_SMALL + "/" + dirName + "/" + file
+                                    File small_folder = new File(Utility.dataPaths.THUMBNAILS_SMALL + "/" + dirName);
+                                    // Does the file already exist? Create it if not
+                                    if (!small_folder.exists()) {
+                                        // No, so try and make it
+                                        if (!small_folder.mkdirs()) {
+                                            throw new UnsupportedOperationException("Failed to make directory: " + small_folder.toString());
+                                        }
+                                    }
+
+                                    // Check if the small version exists already - if so don't regenerate it
+                                    String src_path = Utility.dataPaths.THUMBNAILS + "/" + dirName + "/" + file.getName(); // 'file' is full path but do this for similarity/clarity
+                                    String dst_path = Utility.dataPaths.THUMBNAILS_SMALL + "/" + dirName + "/" + file.getName();
+
+                                    File small_picture = new File(dst_path);
+                                    if( !small_picture.exists() ) {
+
+
+                                        // Get the width/height of the image
+                                        BitmapFactory.Options options = new BitmapFactory.Options();
+                                        options.inJustDecodeBounds = true;
+
+                                        //Returns null, sizes are in the options variable
+                                        BitmapFactory.decodeFile(src_path, options);
+                                        int width = options.outWidth;
+                                        int height = options.outHeight;
+
+                                        int resizeTo = context.getResources().getInteger(R.integer.picture_size);
+                                        if( width > height ) {
+                                            height = (resizeTo * height)/width;
+                                            width = resizeTo;
+                                        } else {
+                                            width = (resizeTo * width)/height;
+                                            height = resizeTo;
+                                        }
+
+                                        // Now resize the image and put it into the small_folder
+                                        Bitmap original_bm = BitmapFactory.decodeFile(src_path);
+                                        Bitmap smaller_bm = Bitmap.createScaledBitmap(original_bm, width, height, false);
+
+                                        FileOutputStream fOut;
+                                        try {
+                                            fOut = new FileOutputStream(small_picture);
+                                            smaller_bm.compress(Bitmap.CompressFormat.JPEG, 25, fOut);
+                                            fOut.flush();
+                                            fOut.close();
+                                            original_bm.recycle();
+                                            smaller_bm.recycle();
+                                        } catch (Exception e) {}
+                                    }
                                 }
 
                             } else {

@@ -28,6 +28,8 @@ public abstract class Utility {
 
         public static final String THUMBNAILS = BASE + "/thumbnails";
         public static final String THUMBNAILS_NOMEDIA = THUMBNAILS + "/.nomedia";
+        public static final String THUMBNAILS_SMALL = BASE + "/thumbnails_small";
+        public static final String THUMBNAILS_SMALL_NOMEDIA = THUMBNAILS_SMALL + "/.nomedia";
 
         public static final String EXPORT = BASE + "/export";
         public static final String PICTURES = EXPORT + "/pictures";

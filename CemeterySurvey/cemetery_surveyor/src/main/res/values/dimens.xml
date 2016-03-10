@@ -8,13 +8,13 @@
     <integer name="grid_view_colnum_dense">4</integer>
 
     <dimen name="picture_size">200dp</dimen>
-    <integer name="picture_size">100</integer>
+    <integer name="picture_size">200</integer>
 
     <dimen name="thumbnail_size">100dp</dimen>
     <integer name="thumbnail_size">100</integer>
 
-    <dimen name="thumbnail_size_dense">50dp</dimen>
-    <integer name="thumbnail_size_dense">50</integer>
+    <dimen name="thumbnail_size_dense">100dp</dimen>
+    <integer name="thumbnail_size_dense">100</integer>
 
     <dimen name="survey_button_height">54dp</dimen>
     <dimen name="list_spacing">16dp</dimen>

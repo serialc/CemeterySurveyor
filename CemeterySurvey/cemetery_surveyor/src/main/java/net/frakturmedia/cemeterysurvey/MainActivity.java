@@ -47,6 +47,7 @@ public class MainActivity extends ScopeActivity {
             new fileStructureBuilder().execute(new String[]{
                     Utility.dataPaths.TEMPLATE_ARCHIVE,
                     Utility.dataPaths.THUMBNAILS,
+                    Utility.dataPaths.THUMBNAILS_SMALL,
                     Utility.dataPaths.PICTURES,
                     Utility.dataPaths.DATA_EXPORT
             });

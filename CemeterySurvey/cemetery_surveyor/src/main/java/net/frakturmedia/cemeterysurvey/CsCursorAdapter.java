@@ -488,9 +488,14 @@ public class CsCursorAdapter extends CursorAdapter {
                                     attView = inflater.inflate(R.layout.survey_list_item_attribute_image, attributesLayout, false);
                                     final ImageButton attImage = (ImageButton) attView.findViewById(R.id.imagebutton_survey_attribute_thumbnail);
 
-                                    final String picturePath = Utility.dataPaths.THUMBNAILS + "/" + catThumbDir + "/" + attName;
+                                    final String picturePath = Utility.dataPaths.THUMBNAILS_SMALL + "/" + catThumbDir + "/" + attName;
                                     final File pictureFile = new File(picturePath);
+                                    final File pictureFileFullSize = new File(Utility.dataPaths.THUMBNAILS + "/" + catThumbDir + "/" + attName);
 
+                                    // Use the raw image
+//                                    attImage.setImageURI(Uri.parse(picturePath));
+
+                                    // Resample image to get bit for destined size
                                     if (pictureFile.exists()) {
                                         // define the resolution options
                                         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -585,7 +590,7 @@ public class CsCursorAdapter extends CursorAdapter {
                                         public boolean onLongClick(View v) {
 
                                             Intent showThumbnail = new Intent(Intent.ACTION_VIEW);
-                                            showThumbnail.setDataAndType(Uri.fromFile(pictureFile), "image/*");
+                                            showThumbnail.setDataAndType(Uri.fromFile(pictureFileFullSize), "image/*");
                                             v.getContext().startActivity(showThumbnail);
 
                                             return true;
