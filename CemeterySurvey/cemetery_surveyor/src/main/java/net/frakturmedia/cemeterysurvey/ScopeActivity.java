@@ -109,6 +109,7 @@ public class ScopeActivity extends AppCompatActivity {
 //        super.onDestroy();
 //    }
 
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(VIEWING_STATE, mViewingState);
@@ -140,15 +141,24 @@ public class ScopeActivity extends AppCompatActivity {
             // in main
             case R.id.action_reload_template:
                 // parse the JSON template
-                mProgressBarWheel.setVisibility(View.VISIBLE);
+                showLoadingScreen(true);
                 new templateFileParser().execute();
                 return true;
+            case R.id.action_export_data:
+                exportData();
+                return true;
+
+            // in all
             case R.id.action_add_attribute:
                 Intent intent = new Intent(context, AttributeAdder.class);
                 startActivity(intent);
                 return true;
-            case R.id.action_export_data:
-                exportData();
+
+            // Respond to the action bar's Up/Home button
+            // Goes to parent activity (activity that called this activity)
+            // rather than to specified parent in AndroidManifest.xml
+            case android.R.id.home:
+                finish();
                 return true;
         }
         // back button?
@@ -185,7 +195,9 @@ public class ScopeActivity extends AppCompatActivity {
     public void displayCemeteries(View view) {
 
         mViewingState = "cemeteries";
-        mFab.setVisibility(View.VISIBLE);
+        if( view != null ) {
+            view.setSelected(true);
+        }
 
         Bundle bundle = new Bundle();
         bundle.putString(FRAGMENT_TYPE_KEY, CsDbContract.PATH_CEMETERY);
@@ -882,6 +894,7 @@ public class ScopeActivity extends AppCompatActivity {
             writer.name("data_type").value(catType);
 
             switch(catType) {
+                case Utility.surveyDataTypes.RADIO_THUMBNAIL:
                 case Utility.surveyDataTypes.THUMBNAIL:
                     writer.name("attributes").value(cursor.getString(COL_ATTRIBUTES));
                     break;
@@ -996,7 +1009,7 @@ public class ScopeActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Survey template loaded", Toast.LENGTH_SHORT).show();
             }
 
-            mProgressBarWheel.setVisibility(View.GONE);
+            showLoadingScreen(false);
 
             super.onPostExecute(result);
         }
@@ -1218,37 +1231,36 @@ public class ScopeActivity extends AppCompatActivity {
                                     File small_picture = new File(dst_path);
                                     if( !small_picture.exists() ) {
 
+                                        // check if we can read and write to 'external' media
+                                        if( !Utility.isExternalStorageReadable() || !Utility.isExternalStorageWritable() ) {
+                                            return "Template loading failed. Unable to read/write to storage media.";
+                                        }
+
                                         // Get the width/height of the image
                                         BitmapFactory.Options options = new BitmapFactory.Options();
                                         options.inJustDecodeBounds = true;
 
-                                        //Returns null, sizes are in the options variable
+                                        // Returns null, sizes are in the options variable
                                         BitmapFactory.decodeFile(src_path, options);
-                                        int width = options.outWidth;
-                                        int height = options.outHeight;
 
-                                        int resizeTo = context.getResources().getInteger(R.integer.picture_size);
-                                        if( width > height ) {
-                                            height = (resizeTo * height)/width;
-                                            width = resizeTo;
-                                        } else {
-                                            width = (resizeTo * width)/height;
-                                            height = resizeTo;
+                                        options.inSampleSize = Utility.calculateInSampleSize(options, context.getResources().getInteger(R.integer.picture_size), context.getResources().getInteger(R.integer.picture_size));
+                                        options.inJustDecodeBounds = false;
+
+                                        Bitmap smaller_bm = BitmapFactory.decodeFile(src_path, options);
+                                        if( smaller_bm == null ) {
+                                            return "Template loading failed. Device unable to load image '" + file.getName() + "' as it is too large.";
                                         }
-
-                                        // Now resize the image and put it into the small_folder
-                                        Bitmap original_bm = BitmapFactory.decodeFile(src_path);
-                                        Bitmap smaller_bm = Bitmap.createScaledBitmap(original_bm, width, height, false);
 
                                         FileOutputStream fOut;
                                         try {
                                             fOut = new FileOutputStream(small_picture);
-                                            smaller_bm.compress(Bitmap.CompressFormat.JPEG, 25, fOut);
+                                            smaller_bm.compress(Bitmap.CompressFormat.JPEG, 50, fOut);
                                             fOut.flush();
                                             fOut.close();
-                                            original_bm.recycle();
                                             smaller_bm.recycle();
-                                        } catch (Exception e) {}
+                                        } catch (Exception e) {
+                                            return "Template loading failed. Couldn't save smaller thumbnail due to: " + e.toString();
+                                        }
                                     }
                                 }
 
@@ -1377,10 +1389,10 @@ public class ScopeActivity extends AppCompatActivity {
                             // print headings and data to file
                             if (row == -1) {
                                 // print headings
-                                buf.append(headings[col] + separator);
+                                buf.append("\"" + headings[col] + "\"" + separator);
                             } else {
                                 // print data
-                                buf.append(cursor.getString(col) + separator);
+                                buf.append("\"" + cursor.getString(col) + "\"" + separator);
                             }
                         }
                         buf.newLine();
@@ -1519,5 +1531,15 @@ public class ScopeActivity extends AppCompatActivity {
 
         graveCursor.close();
         catCursor.close();
+    }
+
+    public void showLoadingScreen( boolean isLoading ) {
+        if( isLoading ) {
+            mProgressBarWheel.setVisibility(View.VISIBLE);
+            mFab.setVisibility(View.GONE);
+        } else {
+            mProgressBarWheel.setVisibility(View.GONE);
+            mFab.setVisibility(View.VISIBLE);
+        }
     }
 }

@@ -217,6 +217,7 @@ public class CsCursorAdapter extends CursorAdapter {
 
                         // create path Uri to picture
                         String picturePath = Utility.dataPaths.PICTURES + "/" + cursor.getString(9);
+                        String pictureFullPath = new File(picturePath).getAbsolutePath();
                         File pictureFile = new File(picturePath);
 
                         //viewHolder.imageView.setVisibility(View.VISIBLE);
@@ -227,14 +228,14 @@ public class CsCursorAdapter extends CursorAdapter {
                             // define the resolution options
                             BitmapFactory.Options options = new BitmapFactory.Options();
                             options.inJustDecodeBounds = true;
-                            BitmapFactory.decodeFile(picturePath, options);
+                            BitmapFactory.decodeFile(pictureFullPath, options);
                             // Calculate inSampleSize
-                            options.inSampleSize = calculateInSampleSize(options, context.getResources().getInteger(R.integer.picture_size), context.getResources().getInteger(R.integer.picture_size));
+                            options.inSampleSize = Utility.calculateInSampleSize(options, context.getResources().getInteger(R.integer.picture_size), context.getResources().getInteger(R.integer.picture_size));
                             // Decode bitmap with inSampleSize set
                             options.inJustDecodeBounds = false;
 
                             viewHolder.imageView.setVisibility(View.VISIBLE);
-                            viewHolder.imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath, options));
+                            viewHolder.imageView.setImageBitmap(BitmapFactory.decodeFile(pictureFullPath, options));
                         } else {
                             Log.e(LOG_TAG, "Could not find picture " + pictureFile.toString());
                         }
@@ -492,21 +493,20 @@ public class CsCursorAdapter extends CursorAdapter {
                                     final File pictureFile = new File(picturePath);
                                     final File pictureFileFullSize = new File(Utility.dataPaths.THUMBNAILS + "/" + catThumbDir + "/" + attName);
 
-                                    // Use the raw image
-//                                    attImage.setImageURI(Uri.parse(picturePath));
-
                                     // Resample image to get bit for destined size
                                     if (pictureFile.exists()) {
                                         // define the resolution options
-                                        BitmapFactory.Options options = new BitmapFactory.Options();
-                                        options.inJustDecodeBounds = true;
-                                        BitmapFactory.decodeFile(picturePath, options);
-                                        // Calculate inSampleSize
-                                        options.inSampleSize = calculateInSampleSize(options, context.getResources().getInteger(R.integer.picture_size), context.getResources().getInteger(R.integer.thumbnail_size_dense));
-                                        // Decode bitmap with inSampleSize set
-                                        options.inJustDecodeBounds = false;
-
-                                        attImage.setImageBitmap(BitmapFactory.decodeFile(picturePath, options));
+//                                        BitmapFactory.Options options = new BitmapFactory.Options();
+//                                        options.inJustDecodeBounds = true;
+//                                        BitmapFactory.decodeFile(pictureFullPath, options);
+//                                        // Calculate inSampleSize
+//                                        options.inSampleSize = Utility.calculateInSampleSize(options, context.getResources().getInteger(R.integer.picture_size), context.getResources().getInteger(R.integer.picture_size));
+//                                        // Decode bitmap with inSampleSize set
+//                                        options.inJustDecodeBounds = false;
+//
+//                                        attImage.setImageBitmap(BitmapFactory.decodeFile(pictureFullPath, options));
+                                        // Use the raw image
+                                        attImage.setImageURI(Uri.parse(picturePath));
                                     } else {
                                         Log.e(LOG_TAG, "Could not find picture " + pictureFile.toString());
                                     }
@@ -583,21 +583,21 @@ public class CsCursorAdapter extends CursorAdapter {
                                     final File pictureFile = new File(picturePath);
                                     final File pictureFileFullSize = new File(Utility.dataPaths.THUMBNAILS + "/" + catThumbDir + "/" + attName);
 
-                                    // Use the raw image
-//                                    attImage.setImageURI(Uri.parse(picturePath));
-
                                     // Resample image to get bit for destined size
                                     if (pictureFile.exists()) {
-                                        // define the resolution options
-                                        BitmapFactory.Options options = new BitmapFactory.Options();
-                                        options.inJustDecodeBounds = true;
-                                        BitmapFactory.decodeFile(picturePath, options);
-                                        // Calculate inSampleSize
-                                        options.inSampleSize = calculateInSampleSize(options, context.getResources().getInteger(R.integer.picture_size), context.getResources().getInteger(R.integer.thumbnail_size_dense));
-                                        // Decode bitmap with inSampleSize set
-                                        options.inJustDecodeBounds = false;
+                                        // define the resolution options (no longer needed as we generate the small thumbnails now)
+//                                        BitmapFactory.Options options = new BitmapFactory.Options();
+//                                        options.inJustDecodeBounds = true;
+//                                        BitmapFactory.decodeFile(picturePath, options);
+//                                        // Calculate inSampleSize
+//                                        options.inSampleSize = Utility.calculateInSampleSize(options, context.getResources().getInteger(R.integer.picture_size), context.getResources().getInteger(R.integer.thumbnail_size_dense));
+//                                        // Decode bitmap with inSampleSize set
+//                                        options.inJustDecodeBounds = false;
+//
+//                                        attImage.setImageBitmap(BitmapFactory.decodeFile(picturePath, options));
 
-                                        attImage.setImageBitmap(BitmapFactory.decodeFile(picturePath, options));
+                                        // Use the raw image
+                                        attImage.setImageURI(Uri.parse(picturePath));
                                     } else {
                                         Log.e(LOG_TAG, "Could not find picture " + pictureFile.toString());
                                     }
@@ -920,26 +920,7 @@ public class CsCursorAdapter extends CursorAdapter {
         }
     }
 
-    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
 
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-        return inSampleSize;
-    }
 
     public void setFragmentType(String fragmentType) {
         mFragmentType = fragmentType;

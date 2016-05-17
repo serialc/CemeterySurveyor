@@ -6,9 +6,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import net.frakturmedia.cemeterysurvey.data.CsDbContract;
+
 
 public class MainActivity extends ScopeActivity {
 
@@ -53,9 +56,26 @@ public class MainActivity extends ScopeActivity {
             });
 
             // parse the JSON template
-            mProgressBarWheel.setVisibility(View.VISIBLE);
+            showLoadingScreen(true);
             new templateFileParser().execute();
         }
+
+        // Initialize left menu buttons
+        Button buttonViewCemeteries = (Button) findViewById(R.id.button_main_display_cemeteries);
+        ImageButton imageButtonViewBookmarks = (ImageButton) findViewById(R.id.imagebutton_display_bookmarks);
+        buttonViewCemeteries.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                displayCemeteries(v);
+            }
+        });
+        imageButtonViewBookmarks.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                displayBookmarks(v);
+            }
+        });
+
 
         // Display the content accordingly
         resetCurrentView();

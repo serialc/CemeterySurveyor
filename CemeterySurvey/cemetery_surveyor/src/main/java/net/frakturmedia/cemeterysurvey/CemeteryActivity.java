@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import net.frakturmedia.cemeterysurvey.data.CsDbContract;
 
@@ -20,6 +23,7 @@ public class CemeteryActivity extends ScopeActivity {
         } else {
             // Do only on first load, and not for tablet rotations
             mViewingState = "sections";
+            //mViewingState = "survey";
         }
 
         // Initialize ScopeActivity variables
@@ -56,6 +60,29 @@ public class CemeteryActivity extends ScopeActivity {
 
         // The new section floating button onclick handler
         mFab.setOnClickListener(new fabClick());
+
+        // Initialize left menu buttons
+        Button buttonViewSections = (Button) findViewById(R.id.button_cem_show_sections);
+        ImageButton imageButtonViewSurvey = (ImageButton) findViewById(R.id.imagebutton_cem_show_survey);
+        ImageButton imageButtonViewPictures = (ImageButton) findViewById(R.id.imagebutton_cem_show_pictures);
+        buttonViewSections.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                displaySections(v);
+            }
+        });
+        imageButtonViewSurvey.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                displaySurvey(v);
+            }
+        });
+        imageButtonViewPictures.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                displayPictures(v);
+            }
+        });
 
         resetCurrentView();
     }

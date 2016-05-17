@@ -917,7 +917,7 @@ public class CsProvider extends ContentProvider {
             case SECTION_EXPORT:
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
                         "SELECT C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
-                                "S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
+                                //"S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
                                 " S.* " +
                                 " FROM " + CsDbContract.SectionEntry.TABLE_NAME + " AS S " +
                                 " LEFT JOIN " +
@@ -936,7 +936,7 @@ public class CsProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
                         "SELECT C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
                                 " S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
-                                " G." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + ", " +
+                                //" G." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + ", " +
                                 " G.* FROM " + CsDbContract.GraveEntry.TABLE_NAME + " AS G " +
 
                                 " LEFT JOIN " +

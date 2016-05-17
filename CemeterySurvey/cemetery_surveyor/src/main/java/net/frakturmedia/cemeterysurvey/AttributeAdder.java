@@ -38,6 +38,7 @@ public class AttributeAdder extends ScopeActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Show the up button in action bar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Display the list of categories in the left pane

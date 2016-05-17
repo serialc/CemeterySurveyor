@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -39,34 +40,34 @@
             android:orientation="vertical">
 
             <Button
+                android:id="@+id/button_cem_show_sections"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="?android:selectableItemBackground"
                 android:clickable="true"
                 android:minHeight="80dp"
-                android:onClick="displaySections"
                 android:text="S"
                 android:textSize="32dp"></Button>
 
             <ImageButton
+                android:id="@+id/imagebutton_cem_show_survey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="?android:selectableItemBackground"
                 android:clickable="true"
                 android:minHeight="80dp"
-                android:onClick="displaySurvey"
                 android:src="@drawable/ic_assignment_black_36dp"></ImageButton>
 
             <ImageButton
+                android:id="@+id/imagebutton_cem_show_pictures"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="?android:selectableItemBackground"
                 android:clickable="true"
                 android:minHeight="80dp"
-                android:onClick="displayPictures"
                 android:src="@drawable/ic_photo_black_36dp"></ImageButton>
         </LinearLayout>
 

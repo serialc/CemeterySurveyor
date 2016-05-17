@@ -83,7 +83,6 @@ public class GraveActivity extends ScopeActivity {
         mFab = (FloatingActionButton) findViewById(R.id.fab);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

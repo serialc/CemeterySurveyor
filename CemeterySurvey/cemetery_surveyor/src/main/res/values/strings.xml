@@ -23,4 +23,7 @@
     <string name="loading_json">Loading and parsing\nJSON survey template</string>
 
     <string name="required_field">*</string>
+    <string name="error_reporting_activity">Error Reporting</string>
+
+    <string name="acra_message">"The application has crashed but the error is being sent to the developer (and the NSA)."</string>
 </resources>

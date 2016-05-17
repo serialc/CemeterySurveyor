@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import net.frakturmedia.cemeterysurvey.data.CsDbContract;
 
@@ -20,6 +23,7 @@ public class SectionActivity extends ScopeActivity {
         } else {
             // Do only on first load, and not for tablet rotations
             mViewingState = "graves";
+            //mViewingState = "survey";
         }
 
         // Initialize ScopeActivity variables
@@ -58,6 +62,29 @@ public class SectionActivity extends ScopeActivity {
         mFab.setOnClickListener(new fabClick());
         // The long click creates an editable field
         mFab.setOnLongClickListener(new fabLongClick());
+
+        // Initialize left menu buttons
+        Button buttonViewGraves = (Button) findViewById(R.id.button_sec_show_graves);
+        ImageButton imageButtonViewSurvey = (ImageButton) findViewById(R.id.imagebutton_sec_show_survey);
+        ImageButton imageButtonViewPictures = (ImageButton) findViewById(R.id.imagebutton_sec_show_pictures);
+        buttonViewGraves.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                displayGraves(v);
+            }
+        });
+        imageButtonViewSurvey.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                displaySurvey(v);
+            }
+        });
+        imageButtonViewPictures.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                displayPictures(v);
+            }
+        });
 
         resetCurrentView();
     }
