@@ -15,6 +15,12 @@
         android:orderInCategory="2"
         android:title="@string/action_create_bookmark"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_delete_item"
+        android:orderInCategory="1"
+        android:title="@string/action_delete_items"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_add_attribute"
         android:orderInCategory="2"

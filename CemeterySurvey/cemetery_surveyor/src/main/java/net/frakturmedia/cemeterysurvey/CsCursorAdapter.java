@@ -59,10 +59,12 @@ public class CsCursorAdapter extends CursorAdapter {
     private static final int COL_SCOPE_ATTNAME = 3;
 
     public static class ViewHolder {
+        public final LinearLayout listItemParent;
         public final TextView headingView;
         public final ImageView imageView;
 
         public ViewHolder(View view) {
+            listItemParent = (LinearLayout) view.findViewById(R.id.linearlayout_list_item);
             headingView = (TextView) view.findViewById(R.id.textview_item_heading);
             imageView = (ImageView) view.findViewById(R.id.imageview_item_picture);
         }
@@ -112,9 +114,9 @@ public class CsCursorAdapter extends CursorAdapter {
         View view;
 
         // Use different xml layout for the different list types
+        // point out what layout file will be the template
         switch (mFragmentType) {
             case CsDbContract.PATH_SURVEY_CATEGORY:
-                // point out what layout file will be the template
                 view = LayoutInflater.from(context).inflate(R.layout.list_item_text_styled, parent, false);
 
                 // attach to the view the variables so we can load them again rather then search each time
@@ -123,7 +125,6 @@ public class CsCursorAdapter extends CursorAdapter {
                 break;
 
             case CsDbContract.PATH_SURVEY:
-                // point out what layout file will be the template
                 view = LayoutInflater.from(context).inflate(R.layout.survey_list_item, parent, false);
 
                 // attach to the view the variables so we can load them again rather then search each time
@@ -132,7 +133,6 @@ public class CsCursorAdapter extends CursorAdapter {
                 break;
 
             default:
-                // point out what layout file will be the template
                 view = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
 
                 // attach to the view the variables so we can load them again rather then search each time
@@ -181,6 +181,10 @@ public class CsCursorAdapter extends CursorAdapter {
                         break;
                     case CsDbContract.PATH_GRAVE:
                         body = cursor.getString(cursor.getColumnIndex(CsDbContract.GraveEntry.COLUMN_GRAVE_NAME));
+                        if (cursor.getInt(cursor.getColumnIndex(CsDbContract.GraveEntry.COLUMN_GRAVE_STATUS)) == 0) {
+                            viewHolder.listItemParent.setBackgroundColor(0x66ff0000); // First byte is ALPHA, then RGB
+                        }
+
                         break;
                     case CsDbContract.PATH_BOOKMARK:
                         String[] bookmark = new String[]{cursor.getString(4), cursor.getString(5), cursor.getString(6)};
@@ -244,6 +248,9 @@ public class CsCursorAdapter extends CursorAdapter {
 
                     case CsDbContract.PATH_SURVEY_ATTRIBUTE:
                         body = cursor.getString(cursor.getColumnIndex(CsDbContract.SurveyAttributeEntry.COLUMN_NAME));
+                        break;
+                    case "delete_cemetery_items":
+                        body = cursor.getString(cursor.getColumnIndex(CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME));
                         break;
 
                     default:
@@ -919,8 +926,6 @@ public class CsCursorAdapter extends CursorAdapter {
             });
         }
     }
-
-
 
     public void setFragmentType(String fragmentType) {
         mFragmentType = fragmentType;

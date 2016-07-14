@@ -2,10 +2,12 @@
     <string name="app_name">Cemetery Surveyor</string>
     <string name="action_reload_template">Reload JSON template</string>
     <string name="action_add_attribute">Add attribute</string>
+    <string name="action_delete_items">Delete this item</string>
     <string name="action_export_data">Export data</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
     <string name="new_cemetery_title">Provide new cemetery name:</string>
 
     <string name="action_show_bookmarks">Display bookmarks</string>
@@ -17,8 +19,9 @@
     <string name="delete_item_heading">Delete item?</string>
     <string name="action_take_picture">Take a picture</string>
 
-    <string name="clear_grave_attributes">Clear all grave attributes</string>
+    <string name="clear_grave_attributes">Clear grave</string>
     <string name="title_activity_attribute_adder">Add attribute</string>
+    <string name="title_delete_items">Delete items</string>
 
     <string name="loading_json">Loading and parsing\nJSON survey template</string>
 

@@ -1,3 +1,4 @@
 #!/bin/bash
+source ~/.bashrc
 
 adb push ~/Documents/Projects/Cemetery\ Science/JSON\ Templates/survey_template.json /sdcard/cemetery_survey_application/template/survey_template.json

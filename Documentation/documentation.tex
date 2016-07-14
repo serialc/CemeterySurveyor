@@ -117,6 +117,7 @@ The following data types also require the \textbf{attributes} descriptors:
 \item Set
 \item Set thumbnails
 \item Radio
+\item Radio thumbnails
 \item Binary
 \end{itemize}
 
@@ -238,6 +239,26 @@ This data type only allows the selection of \textbf{one} attribute from a set.
 \end{itemize}
 
 \newpage
+\subsection{Radio thumbnail}
+This data type allows the selection of one attribute within the category but uses images rather than text as selectable attributes. See Section \ref{upload_thumbnails} for information on locating the image files on the device.\\
+\textbf{Required}
+\begin{itemize}
+\item $\_type$:  Must be defined as "category".
+\item $data\_type$: Must be defined as "radio_thumbnail".
+\item $name$: The unique name kept in records and exported to the GIS referring to this category.
+\item $attributes$: The folder name (e.g., Cross_shape) for the pictures for this category. File names in this folder will become the attribute name in exported data. Folder location is specified in Section \ref{file_structure}.
+\end{itemize}
+\textbf{Optional}
+\begin{itemize}
+\item $camera$: Whether the category should have an option to take a picture.
+\item $attrib\_camera$: Whether each attribute has an option to take a picture.
+\item $title$: The title for the category to be shown to the user. $name$ is used if this is not provided.
+\item $required$: A boolean value (true, false) indicating whether the user should be warned if this field was not completed.
+\end{itemize}
+Keep the thumbnail sizes below 400 pixels in width and height for better performance.
+
+
+\newpage
 \subsection{Binary}
 This data type only allows the indication of \textbf{one} true or false.
 \textbf{Required}
@@ -355,6 +376,7 @@ From the Cemetery activity you can:
 \item Bookmark this cemetery
 \item Complete the cemetery survey
 \item View pictures associated with this cemetery
+\item Delete this cemetery
 \end{itemize}
 
 The top-right icons allow picture taking and bookmarking the cemetery. The left-side icons displays the list of (cemetery) sections, display the survey and display the pictures associated with this cemetery and survey categories and attributes.
@@ -367,6 +389,9 @@ While 'clicking' on a (cemetery) section name takes you to the section activity,
 \subsection{Create a new section}
 Click on the '+' symbol in the circle at the bottom-right of the screen to create a new section.
 
+\subsection{Delete cemetery}
+Click on the vertical ellipses in the top-right of the screen and select `Delete this item'. Confirm when prompted. All data for this grave is permanently deleted.
+
 \section{Section}
 From the Section activity you can:
 \begin{itemize}
@@ -377,6 +402,7 @@ From the Section activity you can:
 \item Bookmark this section
 \item Complete the section survey
 \item View pictures associated with this section
+\item Delete this section
 \end{itemize}
 
 The top-right icons allow picture taking and bookmarking the section. The left-side icons displays the list of graves, display the survey and display the pictures associated with this section and survey categories and attributes.
@@ -389,6 +415,9 @@ While 'clicking' on a grave name takes you to the section activity, holding down
 \subsection{Create a new grave}
 Click on the '+' symbol in the circle at the bottom-right of the screen to create a new grave. It will automatically create an id based on the next highest integer of grave ids. If you wish to create a new grave and specify its name simply hold the '+' symbol down and a dialogue will ask you for the grave name.
 
+\subsection{Delete section}
+Click on the vertical ellipses in the top-right of the screen and select `Delete this item'. Confirm when prompted. All data for this grave is permanently deleted.
+
 \section{Grave}
 From the Grave activity you can:
 \begin{itemize}
@@ -397,12 +426,16 @@ From the Grave activity you can:
 \item Complete the grave survey
 \item View the pictures associated with this grave
 \item Clear all the data associated with this grave
+\item Delete this grave
 \end{itemize}
 
 The grave activity only displays action icons at the top-right corner of the screen. These allow you to delete all the data for this grave, bookmark the grave, take a picture of the grave, display the pictures and survey.
 
 \subsection{Clear grave}
 Clicking on the garbage icon will prompt you to see if you would like to clear all the collected data for this grave.
+
+\subsection{Delete grave}
+Click on the vertical ellipses in the top-right of the screen and select `Delete this item'. Confirm when prompted. All data for this grave is permanently deleted.
 
 \subsection{Complete the survey}
 Unlike the other scopes, the grave offers tabs to display the larger set of categories for the survey.

@@ -84,31 +84,33 @@ public class ScopeActivity extends AppCompatActivity {
     Long mSectionId = null;
     Long mGraveId = null;
 
-    public String mViewingState;
+    Boolean mDeleteMode = false;
 
-//        @Override
-//    protected void onStart() {
-//        Log.d(LOG_TAG, "STARTED " + mScope);
-//        super.onStart();
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        Log.d(LOG_TAG, "STOPPED " + mScope);
-//        super.onStop();
-//    }
-//    @Override
-//    protected void onPause() {
-//        Log.d(LOG_TAG, "PAUSED " + mScope);
-//        super.onPause();
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        Log.d(LOG_TAG, "DESTROYED " + mScope);
-//        super.onDestroy();
-//    }
+    public String mViewingState = "";
 
+        @Override
+    protected void onStart() {
+        Log.d(LOG_TAG, "STARTED " + mScope);
+        super.onStart();
+        resetCurrentView();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(LOG_TAG, "STOPPED " + mScope);
+        super.onStop();
+    }
+    @Override
+    protected void onPause() {
+        Log.d(LOG_TAG, "PAUSED " + mScope);
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(LOG_TAG, "DESTROYED " + mScope);
+        super.onDestroy();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -122,6 +124,7 @@ public class ScopeActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Intent intent;
 
         // Which button was it
         switch (id) {
@@ -147,21 +150,30 @@ public class ScopeActivity extends AppCompatActivity {
             case R.id.action_export_data:
                 exportData();
                 return true;
+            case R.id.action_delete_item:
+                deleteItem();
+                return true;
 
             // in all
             case R.id.action_add_attribute:
-                Intent intent = new Intent(context, AttributeAdder.class);
+                intent = new Intent(context, AttributeAdder.class);
                 startActivity(intent);
                 return true;
 
             // Respond to the action bar's Up/Home button
             // Goes to parent activity (activity that called this activity)
             // rather than to specified parent in AndroidManifest.xml
+            // This was done to prevent backing out of Attribute additon from going back to root
             case android.R.id.home:
-                finish();
-                return true;
+                Log.d(LOG_TAG, this.getClass().getSimpleName());
+                // bit of a hack, only do this for AttributeAdder
+                if( this.getClass().getSimpleName().equals("AttributeAdder") ) {
+                    finish();
+                    return true;
+                }
         }
-        // back button?
+
+        // back button for most activities
         return super.onOptionsItemSelected(item);
     }
 
@@ -187,8 +199,11 @@ public class ScopeActivity extends AppCompatActivity {
             case "pictures":
                 displayPictures(null);
                 break;
+            case "":
+                // Not used
+                break;
             default:
-                throw new UnsupportedOperationException("Unknown cemetery view state: " + mViewingState);
+                throw new UnsupportedOperationException("Unknown view state requested: " + mViewingState);
         }
     }
 
@@ -198,6 +213,7 @@ public class ScopeActivity extends AppCompatActivity {
         if( view != null ) {
             view.setSelected(true);
         }
+        mFab.setVisibility(View.VISIBLE);
 
         Bundle bundle = new Bundle();
         bundle.putString(FRAGMENT_TYPE_KEY, CsDbContract.PATH_CEMETERY);
@@ -383,7 +399,9 @@ public class ScopeActivity extends AppCompatActivity {
                         break;
                     default:
                         Log.e(LOG_TAG, "The grave should always return an id for required field checking. Likely the Grave Activity did not close nicely.");
+                        Log.e(LOG_TAG, "Result code: " + resultCode);
                 }
+                break;
             case Utility.resultCodes.REQUEST_IMAGE_CAPTURE:
                 switch (resultCode) {
                     case RESULT_OK:
@@ -505,7 +523,7 @@ public class ScopeActivity extends AppCompatActivity {
         public void onClick(View view) {
             Log.d(LOG_TAG, "From scope " + mScope + ", item creation button clicked");
 
-            // Creating a new grave does not
+            // Creating a new grave with the next largest integer
             if (mScope.equals(CsDbContract.PATH_SECTION)) {
 
                 // Find out what the maximum integer grave id is for this section
@@ -521,11 +539,18 @@ public class ScopeActivity extends AppCompatActivity {
                 }
                 cursor.close();
 
-                // create new grave with the next largest int
+                // set the format to sql date time
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = new Date();
+
+                // create new grave with the next largest int as the name
+                // Set the date and that its status is empty/0
                 ContentValues cv = new ContentValues();
                 cv.put(CsDbContract.GraveEntry.COLUMN_CEMETERY_ID, mCemeteryId);
                 cv.put(CsDbContract.GraveEntry.COLUMN_SECTION_ID, mSectionId);
                 cv.put(CsDbContract.GraveEntry.COLUMN_GRAVE_NAME, newGraveId);
+                cv.put(CsDbContract.GraveEntry.COLUMN_GRAVE_SURVEY_DATE, dateFormat.format(date));
+                cv.put(CsDbContract.GraveEntry.COLUMN_GRAVE_STATUS, 0);
                 getContentResolver().insert(CsDbContract.GraveEntry.CONTENT_URI, cv);
 
                 return;
@@ -1331,14 +1356,17 @@ public class ScopeActivity extends AppCompatActivity {
     public void exportData() {
         // export all the data to a date-time stamped file in export
 
+        String sFileExtension = ".csv";
+        String sDelimiter = ",";
+
         String[][] exportList = new String[][]{
-                {CsDbContract.CemeteryEntry.CONTENT_URI.toString() + "/export", "cemetery.csv"},
-                {CsDbContract.SectionEntry.CONTENT_URI.toString() + "/export", "section.csv"},
-                {CsDbContract.GraveEntry.CONTENT_URI.toString() + "/export", "grave.csv"},
-                {CsDbContract.CemeteryAttributesEntry.CONTENT_URI.toString() + "/export", "cemetery_attributes.csv"},
-                {CsDbContract.SectionAttributesEntry.CONTENT_URI.toString() + "/export", "section_attributes.csv"},
-                {CsDbContract.GraveAttributesEntry.CONTENT_URI.toString() + "/export", "grave_attributes.csv"},
-                {CsDbContract.PictureEntry.CONTENT_URI.toString() + "/export", "pictures.csv"}
+                {CsDbContract.CemeteryEntry.CONTENT_URI.toString() + "/export", "cemetery"},
+                {CsDbContract.SectionEntry.CONTENT_URI.toString() + "/export", "section"},
+                {CsDbContract.GraveEntry.CONTENT_URI.toString() + "/export", "grave"},
+                {CsDbContract.CemeteryAttributesEntry.CONTENT_URI.toString() + "/export", "cemetery_attributes"},
+                {CsDbContract.SectionAttributesEntry.CONTENT_URI.toString() + "/export", "section_attributes"},
+                {CsDbContract.GraveAttributesEntry.CONTENT_URI.toString() + "/export", "grave_attributes"},
+                {CsDbContract.PictureEntry.CONTENT_URI.toString() + "/export", "pictures"}
         };
 
         for (int f = 0; f < exportList.length; f++) {
@@ -1354,7 +1382,7 @@ public class ScopeActivity extends AppCompatActivity {
             }
 
             // Create the file to place the results in
-            File file = new File(exportDir + "/" + exportList[f][1]);
+            File file = new File(exportDir + "/" + exportList[f][1] + sFileExtension);
             if (!file.exists()) {
                 // Create file
                 try {
@@ -1379,20 +1407,21 @@ public class ScopeActivity extends AppCompatActivity {
 
                     // iterate through rows and columns
                     for (int row = -1; row < cursor.getCount(); row++) {
-                        String separator = ",";
+                        String sLineDelimiter = sDelimiter;
+
                         for (int col = 0; col < cursor.getColumnCount(); col++) {
                             // remove comma separator for last item
                             if (col == (cursor.getColumnCount() - 1)) {
-                                separator = "";
+                                sLineDelimiter = "";
                             }
 
                             // print headings and data to file
                             if (row == -1) {
                                 // print headings
-                                buf.append("\"" + headings[col] + "\"" + separator);
+                                buf.append("\"" + headings[col] + "\"" + sLineDelimiter);
                             } else {
                                 // print data
-                                buf.append("\"" + cursor.getString(col) + "\"" + separator);
+                                buf.append("\"" + cursor.getString(col) + "\"" + sLineDelimiter);
                             }
                         }
                         buf.newLine();
@@ -1522,11 +1551,17 @@ public class ScopeActivity extends AppCompatActivity {
                 }
             });
 
+            // Set the grave status to 0/bad
+            setGraveStatus(scopeIdentifier, 0);
+
             // build/prompt user
             AlertDialog alertDialog = adb.create();
             alertDialog.show();
 
 //            Toast.makeText(this, missingRequirements, Toast.LENGTH_LONG).show();
+        } else {
+            // Set the grave status to 1/good
+            setGraveStatus(scopeIdentifier, 1);
         }
 
         graveCursor.close();
@@ -1541,5 +1576,101 @@ public class ScopeActivity extends AppCompatActivity {
             mProgressBarWheel.setVisibility(View.GONE);
             mFab.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void setGraveStatus( long graveId, int status) {
+        // Set the grave status to 0/bad or 1/good
+        ContentValues cv = new ContentValues();
+        cv.put(CsDbContract.GraveEntry.COLUMN_GRAVE_STATUS, status);
+        int count = getContentResolver().update(
+                CsDbContract.GraveEntry.CONTENT_URI,
+                cv,
+                CsDbContract.GraveEntry._ID + "= ?",
+                new String[] { Long.toString(graveId) });
+        if( count != 1 ) {
+            Log.e(LOG_TAG, "Updating grave status failed.");
+        }
+    }
+
+    public void deleteItem( ) {
+        Log.d(LOG_TAG, "Deleting " + mScope + " cid " + mCemeteryId + " sid " + mSectionId + " gid " + mGraveId);
+
+        // create Alert Dialogue Builder
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        LayoutInflater li = LayoutInflater.from(context);
+        View infoView = li.inflate(R.layout.info_dialog, null);
+        adb.setView(infoView);
+
+        final TextView textViewHeading = (TextView) infoView.findViewById(R.id.edit_text_dialog_heading);
+        final TextView textViewMessage = (TextView) infoView.findViewById(R.id.textview_dialog_message);
+        textViewHeading.setText("Confirm deletion of " + mScope);
+
+        // Need to delete main tables and attribute tables
+        switch (mScope) {
+            case CsDbContract.PATH_CEMETERY:
+                textViewMessage.setText("Are you sure you wish to delete this cemetery and all sections and graves within it!\nThere is no undoing this!");
+                adb.setCancelable(false).setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Delete button
+                        getContentResolver().delete(CsDbContract.CemeteryEntry.buildDeleteCemeteryUri(mCemeteryId), null, null);
+                        // Exit this activity - which is now deleted
+                        finish();
+                    }
+                });
+
+                adb.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                        dialog.cancel();
+                        Toast.makeText(ScopeActivity.this, "Deletion cancelled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+            case CsDbContract.PATH_SECTION:
+                textViewMessage.setText("Are you sure you wish to delete this section and all graves within it!\nThere is no undoing this!");
+                adb.setCancelable(false).setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Delete button
+                        getContentResolver().delete(CsDbContract.SectionEntry.buildDeleteSectionUri(mCemeteryId, mSectionId), null, null);
+                        // Exit this activity - which is now deleted
+                        finish();
+                    }
+                });
+
+                adb.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                        dialog.cancel();
+                        Toast.makeText(ScopeActivity.this, "Deletion cancelled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+            case CsDbContract.PATH_GRAVE:
+                textViewMessage.setText("Are you sure you wish to delete this grave!\nThere is no undoing this!");
+                adb.setCancelable(false).setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Delete button
+                        getContentResolver().delete(CsDbContract.GraveEntry.buildDeleteGraveUri(mCemeteryId, mSectionId, mGraveId), null, null);
+                        // Exit this activity - which is now deleted
+                        finish();
+                    }
+                });
+
+                adb.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                        dialog.cancel();
+                        Toast.makeText(ScopeActivity.this, "Deletion cancelled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown delete item scope requested: " + mScope);
+        }
+
+        // build/prompt user
+        AlertDialog alertDialog = adb.create();
+        alertDialog.show();
+
     }
 }

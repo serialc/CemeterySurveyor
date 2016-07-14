@@ -1,0 +1,46 @@
+\select@language {english}
+\contentsline {chapter}{\numberline {1}Introduction}{4}{chapter.1}
+\contentsline {section}{\numberline {1.1}Android version}{4}{section.1.1}
+\contentsline {chapter}{\numberline {2}Uninstallation and updates}{5}{chapter.2}
+\contentsline {chapter}{\numberline {3}Survey template}{6}{chapter.3}
+\contentsline {section}{\numberline {3.1}Terminology}{6}{section.3.1}
+\contentsline {section}{\numberline {3.2}Category types}{6}{section.3.2}
+\contentsline {section}{\numberline {3.3}Data type requirements}{6}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Descriptor requirements}{7}{subsection.3.3.1}
+\contentsline {section}{\numberline {3.4}JSON file structure}{8}{section.3.4}
+\contentsline {section}{\numberline {3.5}Data type category syntax}{9}{section.3.5}
+\contentsline {subsection}{\numberline {3.5.1}Set}{9}{subsection.3.5.1}
+\contentsline {subsection}{\numberline {3.5.2}Set thumbnail}{10}{subsection.3.5.2}
+\contentsline {subsection}{\numberline {3.5.3}Radio}{11}{subsection.3.5.3}
+\contentsline {subsection}{\numberline {3.5.4}Radio thumbnail}{12}{subsection.3.5.4}
+\contentsline {subsection}{\numberline {3.5.5}Binary}{13}{subsection.3.5.5}
+\contentsline {subsection}{\numberline {3.5.6}Measurement}{14}{subsection.3.5.6}
+\contentsline {subsection}{\numberline {3.5.7}Text}{15}{subsection.3.5.7}
+\contentsline {section}{\numberline {3.6}Uploading the template}{15}{section.3.6}
+\contentsline {section}{\numberline {3.7}Uploading thumbnails}{15}{section.3.7}
+\contentsline {chapter}{\numberline {4}Application usage}{16}{chapter.4}
+\contentsline {section}{\numberline {4.1}Main}{16}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Edit cemetery name}{16}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Create a new cemetery}{17}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}Reload JSON template}{17}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.1.4}Add attribute}{17}{subsection.4.1.4}
+\contentsline {subsection}{\numberline {4.1.5}Data export}{17}{subsection.4.1.5}
+\contentsline {section}{\numberline {4.2}Cemetery}{17}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Edit section name}{18}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Create a new section}{18}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}Delete cemetery}{18}{subsection.4.2.3}
+\contentsline {section}{\numberline {4.3}Section}{18}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}Edit section name}{19}{subsection.4.3.1}
+\contentsline {subsection}{\numberline {4.3.2}Create a new grave}{19}{subsection.4.3.2}
+\contentsline {subsection}{\numberline {4.3.3}Delete section}{19}{subsection.4.3.3}
+\contentsline {section}{\numberline {4.4}Grave}{19}{section.4.4}
+\contentsline {subsection}{\numberline {4.4.1}Clear grave}{20}{subsection.4.4.1}
+\contentsline {subsection}{\numberline {4.4.2}Delete grave}{20}{subsection.4.4.2}
+\contentsline {subsection}{\numberline {4.4.3}Complete the survey}{20}{subsection.4.4.3}
+\contentsline {section}{\numberline {4.5}Surveys}{20}{section.4.5}
+\contentsline {subsection}{\numberline {4.5.1}Radio buttons}{20}{subsection.4.5.1}
+\contentsline {subsection}{\numberline {4.5.2}Binary buttons}{20}{subsection.4.5.2}
+\contentsline {subsection}{\numberline {4.5.3}Thumbnails}{20}{subsection.4.5.3}
+\contentsline {chapter}{\numberline {5}File structure}{21}{chapter.5}
+\contentsline {chapter}{\numberline {6}Problems}{22}{chapter.6}
+\contentsline {section}{\numberline {6.1}Android File Transfer}{22}{section.6.1}

@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "net.frakturmedia.cemeterysurvey"
         minSdkVersion 13
         targetSdkVersion 23
-        versionCode 13
-        versionName "1.12"
+        versionCode 15
+        versionName "1.14"
     }
     buildTypes {
         release {

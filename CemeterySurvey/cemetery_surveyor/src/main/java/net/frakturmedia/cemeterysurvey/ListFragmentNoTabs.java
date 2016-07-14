@@ -29,6 +29,7 @@ import java.io.File;
 
 /**
  * Created by cyrille on 27/01/16.
+ * This is old and currently never used. Was superceded by newer version with tabs.
  */
 public class ListFragmentNoTabs extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 

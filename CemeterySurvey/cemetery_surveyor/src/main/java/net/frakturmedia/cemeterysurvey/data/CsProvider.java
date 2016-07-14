@@ -26,6 +26,7 @@ public class CsProvider extends ContentProvider {
     static final int CEMETERY = 100;
     static final int CEMETERY_ID = 101;
     static final int CEMETERY_EXPORT = 109;
+    static final int CEMETERY_DELETE = 110;
 
     static final int CEMETERY_ATTRIBUTE = 150;
     static final int CEMETERY_ATTRIBUTE_FOR_CEMETERYID_CATEGORY = 151;
@@ -38,6 +39,7 @@ public class CsProvider extends ContentProvider {
     static final int SECTIONS_FROM_CEMETERY_ID = 202;
     static final int SECTION_ID_NAMES = 203;
     static final int SECTION_EXPORT = 209;
+    static final int SECTION_DELETE = 210;
 
     static final int SECTION_ATTRIBUTE = 250;
     static final int SECTION_ATTRIBUTE_FOR_SECTIONID_CATEGORY = 251;
@@ -50,6 +52,7 @@ public class CsProvider extends ContentProvider {
     static final int GRAVES_FROM_SECTION_ID = 302;
     static final int GRAVE_ID_NAMES = 303;
     static final int GRAVE_EXPORT = 309;
+    static final int GRAVE_DELETE = 310;
 
     static final int GRAVE_ATTRIBUTE = 350;
     static final int GRAVE_ATTRIBUTE_FOR_GRAVEID_CATEGORY = 351;
@@ -452,6 +455,7 @@ public class CsProvider extends ContentProvider {
         matcher.addURI(authority, CsDbContract.PATH_CEMETERY, CEMETERY);
         matcher.addURI(authority, CsDbContract.PATH_CEMETERY + "/#", CEMETERY_ID);
         matcher.addURI(authority, CsDbContract.PATH_CEMETERY + "/export", CEMETERY_EXPORT);
+        matcher.addURI(authority, CsDbContract.PATH_CEMETERY + "/delete/#", CEMETERY_DELETE);
 
         matcher.addURI(authority, CsDbContract.PATH_CEMETERY_ATTRIBUTES, CEMETERY_ATTRIBUTE);
         matcher.addURI(authority, CsDbContract.PATH_CEMETERY_ATTRIBUTES + "/#", CEMETERY_ATTRIBUTE_FOR_CEMETERYID);
@@ -463,6 +467,7 @@ public class CsProvider extends ContentProvider {
         matcher.addURI(authority, CsDbContract.PATH_SECTION + "/" + CsDbContract.PATH_CEMETERY + "/#", SECTIONS_FROM_CEMETERY_ID);
         matcher.addURI(authority, CsDbContract.PATH_SECTION + "/joined", SECTION_ID_NAMES);
         matcher.addURI(authority, CsDbContract.PATH_SECTION + "/export", SECTION_EXPORT);
+        matcher.addURI(authority, CsDbContract.PATH_SECTION + "/delete/#/#", SECTION_DELETE);
 
         matcher.addURI(authority, CsDbContract.PATH_SECTION_ATTRIBUTES, SECTION_ATTRIBUTE);
         matcher.addURI(authority, CsDbContract.PATH_SECTION_ATTRIBUTES + "/#", SECTION_ATTRIBUTE_FOR_SECTIONID);
@@ -475,6 +480,7 @@ public class CsProvider extends ContentProvider {
         matcher.addURI(authority, CsDbContract.PATH_GRAVE + "/joined", GRAVE_ID_NAMES);
         matcher.addURI(authority, CsDbContract.PATH_GRAVE + "/#/clear", GRAVE_CLEAR_FOR_GRAVEID);
         matcher.addURI(authority, CsDbContract.PATH_GRAVE + "/export", GRAVE_EXPORT);
+        matcher.addURI(authority, CsDbContract.PATH_GRAVE + "/delete/#/#/#", GRAVE_DELETE);
 
         matcher.addURI(authority, CsDbContract.PATH_GRAVE_ATTRIBUTES, GRAVE_ATTRIBUTE);
         matcher.addURI(authority, CsDbContract.PATH_GRAVE_ATTRIBUTES + "/#", GRAVE_ATTRIBUTE_FOR_GRAVEID);
@@ -916,7 +922,9 @@ public class CsProvider extends ContentProvider {
                 break;
             case SECTION_EXPORT:
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
-                        "SELECT C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                        "SELECT  C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + " || '_' || " +
+                                "S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + " AS fullid, " +
+                                "C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
                                 //"S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
                                 " S.* " +
                                 " FROM " + CsDbContract.SectionEntry.TABLE_NAME + " AS S " +
@@ -934,7 +942,10 @@ public class CsProvider extends ContentProvider {
                 break;
             case GRAVE_EXPORT:
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
-                        "SELECT C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                        "SELECT   C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + " || '_' || " +
+                                " S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + " || '_' || " +
+                                " G." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + " AS fullid, " +
+                                "C." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
                                 " S." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
                                 //" G." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + ", " +
                                 " G.* FROM " + CsDbContract.GraveEntry.TABLE_NAME + " AS G " +
@@ -982,7 +993,9 @@ public class CsProvider extends ContentProvider {
                 break;
             case SECTION_ATTRIBUTE_EXPORT:
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
-                        "SELECT SC." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                        "SELECT  SC." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + " || '_' || " +
+                                "SC." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + " AS fullid, " +
+                                "SC." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
                                 " SC." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
                                 " SA.* " +
                                 " FROM " + CsDbContract.SectionAttributesEntry.TABLE_NAME + " AS SA " +
@@ -1008,7 +1021,10 @@ public class CsProvider extends ContentProvider {
                 break;
             case GRAVE_ATTRIBUTE_EXPORT:
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
-                        "SELECT SCG." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
+                        "SELECT   SCG." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + " || '_' || " +
+                                " SCG." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + " || '_' || " +
+                                " SCG." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + " AS fullid, " +
+                                "SCG." + CsDbContract.CemeteryEntry.COLUMN_CEMETERY_NAME + ", " +
                                 " SCG." + CsDbContract.SectionEntry.COLUMN_SECTION_NAME + ", " +
                                 " SCG." + CsDbContract.GraveEntry.COLUMN_GRAVE_NAME + ", " +
                                 " GA.* " +
@@ -1235,11 +1251,104 @@ public class CsProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
-        int rowsDeleted;
+        int rowsDeleted = 0;
 
-        //Log.d(LOG_TAG, "Attempting delete: " + uri.toString());
+        Log.d(LOG_TAG, "Content provider delete: " + uri.toString());
 
         switch (sUriMatcher.match(uri)) {
+            case CEMETERY_DELETE:
+                if( selection != null || selectionArgs != null ) {
+                    Log.w(LOG_TAG, "Deletion call ignores selection and arguments");
+                }
+
+                String [] cemetery_id = CsDbContract.CemeteryEntry.getCemeteryDeletionIdArray(uri);
+
+                // Delete in all the tables
+                // Primary tables
+                rowsDeleted = db.delete(CsDbContract.CemeteryEntry.TABLE_NAME,
+                        CsDbContract.CemeteryEntry._ID + " = ?" ,
+                        cemetery_id);
+                rowsDeleted += db.delete(CsDbContract.SectionEntry.TABLE_NAME,
+                        CsDbContract.SectionEntry.COLUMN_CEMETERY_ID + " = ?" ,
+                        cemetery_id);
+                rowsDeleted += db.delete(CsDbContract.GraveEntry.TABLE_NAME,
+                        CsDbContract.GraveEntry.COLUMN_CEMETERY_ID + " = ?" ,
+                        cemetery_id);
+                // Attribute tables
+                rowsDeleted += db.delete(CsDbContract.CemeteryAttributesEntry.TABLE_NAME,
+                        CsDbContract.CemeteryAttributesEntry.COLUMN_CEMETERY_ID + " = ?",
+                        cemetery_id);
+                // Can't delete section and grave attributes without first getting their ids - don't worry about it.
+
+                // Pictures
+                rowsDeleted += db.delete(CsDbContract.PictureEntry.TABLE_NAME,
+                        CsDbContract.PictureEntry.COLUMN_CEMETERY_ID + " = ?",
+                        cemetery_id);
+                // Bookmarks
+                rowsDeleted += db.delete(CsDbContract.BookmarkEntry.TABLE_NAME,
+                        CsDbContract.BookmarkEntry.COLUMN_CEMETERY_ID + " = ?",
+                        cemetery_id);
+
+                break;
+            case SECTION_DELETE:
+                if( selection != null || selectionArgs != null ) {
+                    Log.w(LOG_TAG, "Deletion call ignores selection and arguments");
+                }
+
+                String [] section_ids = CsDbContract.SectionEntry.getSectionDeletionIdArray(uri);
+
+                // Delete in all the tables
+                // Primary tables
+                rowsDeleted = db.delete(CsDbContract.SectionEntry.TABLE_NAME,
+                        CsDbContract.SectionEntry.COLUMN_CEMETERY_ID + " = ? AND " + CsDbContract.SectionEntry._ID + " = ?",
+                        section_ids);
+                rowsDeleted += db.delete(CsDbContract.GraveEntry.TABLE_NAME,
+                        CsDbContract.GraveEntry.COLUMN_CEMETERY_ID + " = ? AND " + CsDbContract.GraveEntry.COLUMN_SECTION_ID + " = ?",
+                        section_ids);
+                // Attribute tables
+                rowsDeleted += db.delete(CsDbContract.SectionAttributesEntry.TABLE_NAME,
+                        CsDbContract.SectionAttributesEntry.COLUMN_SECTION_ID + " = ?",
+                        new String[]{section_ids[1]});
+                // Can't delete grave attributes without first getting their ids - don't worry about it.
+
+                // Pictures
+                rowsDeleted += db.delete(CsDbContract.PictureEntry.TABLE_NAME,
+                        CsDbContract.PictureEntry.COLUMN_CEMETERY_ID + " = ? AND " + CsDbContract.PictureEntry.COLUMN_SECTION_ID + " = ?",
+                        section_ids);
+                // Bookmarks
+                rowsDeleted += db.delete(CsDbContract.BookmarkEntry.TABLE_NAME,
+                        CsDbContract.BookmarkEntry.COLUMN_CEMETERY_ID + " = ? AND " + CsDbContract.BookmarkEntry.COLUMN_SECTION_ID + " = ?",
+                        section_ids);
+
+                break;
+            case GRAVE_DELETE:
+                if( selection != null || selectionArgs != null ) {
+                    Log.w(LOG_TAG, "Deletion call ignores selection and arguments");
+                }
+
+                String [] grave_ids = CsDbContract.GraveEntry.getGraveDeletionIdArray(uri);
+
+                // Delete in all the tables
+                // Primary tables
+                rowsDeleted += db.delete(CsDbContract.GraveEntry.TABLE_NAME,
+                        CsDbContract.GraveEntry.COLUMN_CEMETERY_ID + " = ? AND " + CsDbContract.GraveEntry.COLUMN_SECTION_ID + " = ? AND " + CsDbContract.GraveEntry._ID + " = ?",
+                        grave_ids);
+                // Attribute tables
+                rowsDeleted += db.delete(CsDbContract.GraveAttributesEntry.TABLE_NAME,
+                        CsDbContract.GraveAttributesEntry.COLUMN_GRAVE_ID + " = ?",
+                        new String[]{grave_ids[2]});
+
+                // Pictures
+                rowsDeleted += db.delete(CsDbContract.PictureEntry.TABLE_NAME,
+                        CsDbContract.PictureEntry.COLUMN_CEMETERY_ID + " = ? AND " + CsDbContract.PictureEntry.COLUMN_SECTION_ID + " = ? AND " + CsDbContract.PictureEntry.COLUMN_GRAVE_ID + " = ?",
+                        grave_ids);
+                // Bookmarks
+                rowsDeleted += db.delete(CsDbContract.BookmarkEntry.TABLE_NAME,
+                        CsDbContract.BookmarkEntry.COLUMN_CEMETERY_ID + " = ? AND " + CsDbContract.BookmarkEntry.COLUMN_SECTION_ID + " = ? AND " + CsDbContract.BookmarkEntry.COLUMN_GRAVE_ID + " = ?",
+                        grave_ids);
+
+                break;
+
             case CEMETERY_ATTRIBUTE_FOR_CEMETERYID_CATEGORY_ATTRIBUTE:
                 rowsDeleted = db.delete(CsDbContract.CemeteryAttributesEntry.TABLE_NAME,
                         sSelectCemeteryAttributesCategoryByIdAndName,

@@ -64,6 +64,12 @@ public class CsDbContract {
         public static long getCemeteryIdFromUri(Uri uri) {
             return Long.parseLong(uri.getPathSegments().get(1));
         }
+        public static Uri buildDeleteCemeteryUri(long id) {
+            return CONTENT_URI.buildUpon().appendPath("delete").appendPath(Long.toString(id)).build();
+        }
+        public static String[] getCemeteryDeletionIdArray(Uri uri) {
+            return new String[]{uri.getPathSegments().get(2)};
+        }
     }
 
     public static final class SectionEntry implements BaseColumns {
@@ -97,6 +103,12 @@ public class CsDbContract {
         public static long getCemeteryIdFromUri(Uri uri) {
             return Long.parseLong(uri.getPathSegments().get(2));
         }
+        public static Uri buildDeleteSectionUri(long cid, long sid) {
+            return CONTENT_URI.buildUpon().appendPath("delete").appendPath(Long.toString(cid)).appendPath(Long.toString(sid)).build();
+        }
+        public static String[] getSectionDeletionIdArray(Uri uri) {
+            return new String[]{uri.getPathSegments().get(2), uri.getPathSegments().get(3)};
+        }
     }
 
     public static final class GraveEntry implements BaseColumns {
@@ -115,6 +127,8 @@ public class CsDbContract {
         public static final String COLUMN_CEMETERY_ID = "cemetery_id";
         public static final String COLUMN_SECTION_ID = "section_id";
         public static final String COLUMN_GRAVE_NAME = "grave_name";
+        public static final String COLUMN_GRAVE_SURVEY_DATE = "survey_date";
+        public static final String COLUMN_GRAVE_STATUS = "grave_surv_status";
 
         // Creates uri for getting all graves in a section id
         public static Uri buildGravesInSectionIdUri(long id) {
@@ -132,6 +146,12 @@ public class CsDbContract {
         }
         public static long getSectionIdFromUri(Uri uri) {
             return Long.parseLong(uri.getPathSegments().get(2));
+        }
+        public static Uri buildDeleteGraveUri(long cid, long sid, long gid) {
+            return CONTENT_URI.buildUpon().appendPath("delete").appendPath(Long.toString(cid)).appendPath(Long.toString(sid)).appendPath(Long.toString(gid)).build();
+        }
+        public static String[] getGraveDeletionIdArray(Uri uri) {
+            return new String[]{uri.getPathSegments().get(2), uri.getPathSegments().get(3), uri.getPathSegments().get(4)};
         }
     }
 

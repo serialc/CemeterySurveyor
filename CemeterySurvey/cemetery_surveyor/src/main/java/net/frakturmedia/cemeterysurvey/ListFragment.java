@@ -102,7 +102,6 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
         switch (mFragmentType) {
             case CsDbContract.PATH_CEMETERY:
                 getLoaderManager().initLoader(LOADER_ID_CEMETERY, bundle, this); // calls OnCreateLoader
-                getLoaderManager().initLoader(LOADER_ID_CEMETERY, bundle, this);
                 break;
             case CsDbContract.PATH_SECTION:
                 getLoaderManager().initLoader(LOADER_ID_SECTION, bundle, this); // calls OnCreateLoader
@@ -285,8 +284,8 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
                 loader = new CursorLoader(
                         this.getActivity(),
                         CsDbContract.GraveEntry.buildGravesInSectionIdUri(scopeTypeIdentifier),
-                        new String[]{CsDbContract.SectionEntry._ID, CsDbContract.GraveEntry.COLUMN_GRAVE_NAME},
-                        null, null, null);
+                        new String[]{CsDbContract.SectionEntry._ID, CsDbContract.GraveEntry.COLUMN_GRAVE_NAME, CsDbContract.GraveEntry.COLUMN_GRAVE_STATUS},
+                        null, null, CsDbContract.SectionEntry._ID);
                 break;
             case LOADER_ID_BOOKMARK:
                 loader = new CursorLoader(

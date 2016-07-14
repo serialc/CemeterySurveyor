@@ -84,13 +84,14 @@
 
         <activity
             android:name=".AttributeAdder"
-            android:label="@string/title_activity_attribute_adder"
+            android:label="@string/title_delete_items"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.frakturmedia.cemeterysurvey.ScopeActivity" />
+                android:value="net.frakturmedia.cemeterysurvey.MainActivity" />
         </activity>
+
         <activity
             android:name=".ErrorReporting"
             android:label="@string/error_reporting_activity"

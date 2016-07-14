@@ -48,6 +48,8 @@ public class CsDbHelper extends SQLiteOpenHelper {
                 GraveEntry.COLUMN_CEMETERY_ID + " INTEGER NOT NULL, " +
                 GraveEntry.COLUMN_SECTION_ID + " INTEGER NOT NULL, " +
                 GraveEntry.COLUMN_GRAVE_NAME + " TEXT NOT NULL, " +
+                GraveEntry.COLUMN_GRAVE_SURVEY_DATE + " DATE NOT NULL, " +
+                GraveEntry.COLUMN_GRAVE_STATUS + " INTEGER NOT NULL, " +
                 " FOREIGN KEY (" + GraveEntry.COLUMN_CEMETERY_ID + ") REFERENCES " +
                 CemeteryEntry.TABLE_NAME + " (" + CemeteryEntry._ID + ")," +
                 " FOREIGN KEY (" + GraveEntry.COLUMN_SECTION_ID + ") REFERENCES " +

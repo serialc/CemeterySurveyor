@@ -29,15 +29,21 @@
         android:title="@string/action_create_bookmark"
         app:showAsAction="always" />
 
+
+
     <item
-        android:id="@+id/action_clear_grave"
-        android:orderInCategory="10"
-        android:title="@string/clear_grave_attributes"
-        android:icon="@drawable/ic_delete_white_36dp"
-        app:showAsAction="always" />
+        android:id="@+id/action_delete_item"
+        android:orderInCategory="1"
+        android:title="@string/action_delete_items"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_add_attribute"
         android:orderInCategory="2"
         android:title="@string/action_add_attribute"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_clear_grave"
+        android:orderInCategory="3"
+        android:title="@string/clear_grave_attributes"
         app:showAsAction="never" />
 </menu>

@@ -95,4 +95,5 @@ public class SectionActivity extends ScopeActivity {
         getMenuInflater().inflate(R.menu.menu_cemetery, menu);
         return true;
     }
+
 }
