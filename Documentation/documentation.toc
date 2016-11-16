@@ -5,7 +5,7 @@
 \contentsline {chapter}{\numberline {3}Survey template}{6}{chapter.3}
 \contentsline {section}{\numberline {3.1}Terminology}{6}{section.3.1}
 \contentsline {section}{\numberline {3.2}Category types}{6}{section.3.2}
-\contentsline {section}{\numberline {3.3}Data type requirements}{6}{section.3.3}
+\contentsline {section}{\numberline {3.3}Data type requirements}{7}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Descriptor requirements}{7}{subsection.3.3.1}
 \contentsline {section}{\numberline {3.4}JSON file structure}{8}{section.3.4}
 \contentsline {section}{\numberline {3.5}Data type category syntax}{9}{section.3.5}
@@ -39,8 +39,7 @@
 \contentsline {subsection}{\numberline {4.4.3}Complete the survey}{20}{subsection.4.4.3}
 \contentsline {section}{\numberline {4.5}Surveys}{20}{section.4.5}
 \contentsline {subsection}{\numberline {4.5.1}Radio buttons}{20}{subsection.4.5.1}
-\contentsline {subsection}{\numberline {4.5.2}Binary buttons}{20}{subsection.4.5.2}
-\contentsline {subsection}{\numberline {4.5.3}Thumbnails}{20}{subsection.4.5.3}
+\contentsline {subsection}{\numberline {4.5.2}Thumbnails}{20}{subsection.4.5.2}
 \contentsline {chapter}{\numberline {5}File structure}{21}{chapter.5}
 \contentsline {chapter}{\numberline {6}Problems}{22}{chapter.6}
 \contentsline {section}{\numberline {6.1}Android File Transfer}{22}{section.6.1}

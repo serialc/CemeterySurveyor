@@ -84,6 +84,7 @@ There exist different category types to suit the desired data collection need:
 \item \textbf{Set} ($set$): Multiple textual items from which none, one, multiple or all may be selected.
 \item \textbf{Set thumbnail} ($set\_thumbnail$): Same as the set but with images rather than textual descriptions.
 \item \textbf{Radio} ($radio$): Only one can be selected from textual item list.
+\item \textbf{Radio thumbnail} ($radio\_thumbnail$): Same as the radio but with images rather than descriptions.
 \item \textbf{Binary} ($binary$): Same as radio but only two choices are available.
 \item \textbf{Measurement} ($measurement$): A number is entered. Context determines the unit.
 \item \textbf{Text} ($text$): Any text can be entered.
@@ -270,7 +271,6 @@ This data type only allows the indication of \textbf{one} true or false.
 \textbf{Optional}
 \begin{itemize}
 \item $camera$: Whether the category should have an option to take a picture.
-\item $attrib\_camera$: Whether each attribute has an option to take a picture.
 \item $title$: The title for the category to be shown to the user. $name$ is used if this is not provided.
 \item $required$: A boolean value (true, false) indicating whether the user should be warned if this field was not completed.
 \end{itemize}
@@ -448,9 +448,6 @@ The surveys operate similarly across the three scopes. We provide a few notes on
 
 \subsection{Radio buttons}
 Radio buttons allow the selection of one attribute. If you desire to disable all the attributes but have already selected one, simply hold your finger down on the selected attribute. This will disable it.
-
-\subsection{Binary buttons}
-Binary buttons will not store any data by default (they are NULL) although they state 'FALSE'. If you wish to provide a FALSE value then you must first switch the state to TRUE and back to FALSE. Relying on this usage is not, however, a wise decision unless the category is defined as required, reminding the user. A better alternative is a radio button with two alternatives.
 
 \subsection{Thumbnails}
 Thumbnail icons can be enlarged by holding a finger down on the images.
