@@ -8,10 +8,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,8 @@ import android.widget.Toast;
 import net.frakturmedia.cemeterysurvey.data.CsDbContract;
 
 import java.io.File;
+
+import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 
 /**
  * Created by cyrille on 27/01/16.
@@ -64,8 +69,6 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
     private static final String ARG_PAGE_NUMBER = "page_number";
 
     private String mFragmentType;
-    private String mClickBehaviour;
-    private String mLongClickBehaviour;
 
     // The list views
     private ListView mlistView = null;
@@ -89,8 +92,8 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
         mFragmentType = getArguments().getString(FRAGMENT_TYPE_KEY);
         String layoutViewHeading = getArguments().getString(FRAGMENT_HEADING);
         String fragmentScope = getArguments().getString(FRAGMENT_SCOPE);  // can be "cemetery", "section", "grave"
-        mClickBehaviour = getArguments().getString(CLICK_BEHAVIOUR);
-        mLongClickBehaviour = getArguments().getString(LONG_CLICK_BEHAVIOUR);
+        String mClickBehaviour = getArguments().getString(CLICK_BEHAVIOUR);
+        String mLongClickBehaviour = getArguments().getString(LONG_CLICK_BEHAVIOUR);
 
         // specify the purpose of the loader in the first parameter - this will be used by
         // a switch statement in OnCreateLoader
@@ -616,8 +619,11 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
 
                     case CsDbContract.PATH_PICTURE:
                         scopeActivity = new Intent(Intent.ACTION_VIEW);
+
                         File file = new File(Utility.dataPaths.PICTURES + "/" + innerCursor.getString(innerCursor.getColumnIndex(CsDbContract.PictureEntry.COLUMN_FILE_NAME)));
-                        scopeActivity.setDataAndType(Uri.fromFile(file), "image/*");
+
+                        scopeActivity.setDataAndType(FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", file), "image/*");
+                        scopeActivity.setFlags(FLAG_GRANT_READ_URI_PERMISSION);
                         startActivity(scopeActivity);
                         return;
 

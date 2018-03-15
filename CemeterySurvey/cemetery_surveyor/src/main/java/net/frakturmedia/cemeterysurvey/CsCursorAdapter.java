@@ -1,15 +1,20 @@
 package net.frakturmedia.cemeterysurvey;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -855,23 +860,38 @@ public class CsCursorAdapter extends CursorAdapter {
 
                                 // click listener - launch camera intent
                                 attCamera.setOnClickListener(new View.OnClickListener() {
+
                                     @Override
                                     public void onClick(View v) {
+
                                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                                        if (takePictureIntent.resolveActivity(v.getContext().getPackageManager()) != null) {
-                                            File photoFile = new File(Utility.pictures.TEMPORARY_SAVE_FILE_PATH);
-                                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                                            ((Activity) v.getContext()).startActivityForResult(takePictureIntent, Utility.resultCodes.REQUEST_IMAGE_CAPTURE);
+                                        // See if we have permission to write to disk and then create dir structure if needed
+                                        // Check if we have permission to write to device (required for Android 6 and greater)
+                                        if (ContextCompat.checkSelfPermission(v.getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                            // Permission is not granted
+                                            Log.d(LOG_TAG, "Permission has not yet been granted to take a picture!");
+
+                                            // Request permission
+                                            ActivityCompat.requestPermissions((Activity) v.getContext(), new String[]{Manifest.permission.CAMERA}, 2);
+
+                                        } else {
+
+                                            // Permission has already been granted
+                                            if (takePictureIntent.resolveActivity(v.getContext().getPackageManager()) != null) {
+                                                File photoFile = new File(Utility.pictures.TEMPORARY_SAVE_FILE_PATH);
+                                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(v.getContext(), BuildConfig.APPLICATION_ID + ".provider", photoFile));
+                                                ((Activity) v.getContext()).startActivityForResult(takePictureIntent, Utility.resultCodes.REQUEST_IMAGE_CAPTURE);
+                                            }
+
+                                            SharedPreferences settings = ((Activity) v.getContext()).getPreferences(Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = settings.edit();
+                                            editor.putString(Utility.pictures.CATEGORY_NAME, catFullName);
+                                            editor.putString(Utility.pictures.ATTRIBUTE_NAME, attName);
+
+                                            // Commit the edits!
+                                            editor.commit();
                                         }
-
-                                        SharedPreferences settings = ((Activity) v.getContext()).getPreferences(Context.MODE_PRIVATE);
-                                        SharedPreferences.Editor editor = settings.edit();
-                                        editor.putString(Utility.pictures.CATEGORY_NAME, catFullName);
-                                        editor.putString(Utility.pictures.ATTRIBUTE_NAME, attName);
-
-                                        // Commit the edits!
-                                        editor.commit();
                                     }
                                 });
                             }
@@ -908,20 +928,34 @@ public class CsCursorAdapter extends CursorAdapter {
             surveyViewHolder.cameraIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                    if (takePictureIntent.resolveActivity(v.getContext().getPackageManager()) != null) {
-                        File photoFile = new File(Utility.pictures.TEMPORARY_SAVE_FILE_PATH);
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                        ((Activity)v.getContext()).startActivityForResult(takePictureIntent, Utility.resultCodes.REQUEST_IMAGE_CAPTURE);
+                    // See if we have permission to write to disk and then create dir structure if needed
+                    // Check if we have permission to write to device (required for Android 6 and greater)
+                    if (ContextCompat.checkSelfPermission(v.getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        // Permission is not granted
+                        Log.d(LOG_TAG, "Permission has not yet been granted to take a picture!");
+
+                        // Request permission
+                        ActivityCompat.requestPermissions((Activity) v.getContext(), new String[]{Manifest.permission.CAMERA}, 2);
+
+                    } else {
+
+                        // Permission has already been granted
+                        if (takePictureIntent.resolveActivity(v.getContext().getPackageManager()) != null) {
+                            File photoFile = new File(Utility.pictures.TEMPORARY_SAVE_FILE_PATH);
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(v.getContext(), BuildConfig.APPLICATION_ID + ".provider", photoFile));
+                            ((Activity) v.getContext()).startActivityForResult(takePictureIntent, Utility.resultCodes.REQUEST_IMAGE_CAPTURE);
+                        }
+
+                        SharedPreferences settings = ((Activity) v.getContext()).getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(Utility.pictures.CATEGORY_NAME, catFullName);
+
+                        // Commit the edits!
+                        editor.commit();
                     }
-
-                    SharedPreferences settings = ((Activity)v.getContext()).getPreferences(Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putString(Utility.pictures.CATEGORY_NAME, catFullName);
-
-                    // Commit the edits!
-                    editor.commit();
                 }
             });
         }

@@ -1,11 +1,13 @@
 package net.frakturmedia.cemeterysurvey;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,9 +17,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.JsonWriter;
 import android.util.Log;
@@ -347,10 +352,26 @@ public class ScopeActivity extends AppCompatActivity {
     public void takePicture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = new File(Utility.pictures.TEMPORARY_SAVE_FILE_PATH);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-            startActivityForResult(takePictureIntent, Utility.resultCodes.REQUEST_IMAGE_CAPTURE);
+        // See if we have permission to write to disk and then create dir structure if needed
+        // Check if we have permission to write to device (required for Android 6 and greater)
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            Log.d(LOG_TAG, "Permission has not yet been granted to take a picture!");
+
+            // No explanation needed; request the permission
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 2);
+
+        } else {
+
+            // Permission has already been granted
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+
+                File photoFile = new File(Utility.pictures.TEMPORARY_SAVE_FILE_PATH);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", photoFile));
+                //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile)); // old way
+
+                startActivityForResult(takePictureIntent, Utility.resultCodes.REQUEST_IMAGE_CAPTURE);
+            }
         }
     }
 
@@ -682,11 +703,13 @@ public class ScopeActivity extends AppCompatActivity {
                     //Log.d(LOG_TAG, "Checking and maybe creating " + path);
 
                     // create file path
-
                     File file = new File(path);
 
+                    Log.d(LOG_TAG, "Checking dir/path exists:" + path);
                     // Does the file already exist?
                     if (!file.exists()) {
+                        Log.d(LOG_TAG, "About to create dir/path:" + path);
+
                         // No, so try and make it
                         if (!file.mkdirs()) {
                             throw new UnsupportedOperationException("Failed to make directory: " + path);

@@ -1,7 +1,11 @@
 package net.frakturmedia.cemeterysurvey;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -9,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import net.frakturmedia.cemeterysurvey.data.CsDbContract;
 
@@ -46,14 +51,27 @@ public class MainActivity extends ScopeActivity {
 
             mViewingState = "cemeteries";
 
-            // Check if directory structure exists, create if not
-            new fileStructureBuilder().execute(new String[]{
-                    Utility.dataPaths.TEMPLATE_ARCHIVE,
-                    Utility.dataPaths.THUMBNAILS,
-                    Utility.dataPaths.THUMBNAILS_SMALL,
-                    Utility.dataPaths.PICTURES,
-                    Utility.dataPaths.DATA_EXPORT
-            });
+            // See if we have permission to write to disk and then create dir structure if needed
+            // Check if we have permission to write to device (required for Android 6 and greater)
+            if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted
+                Log.d(LOG_TAG, "Permission has not yet been granted to write to external storage!");
+
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+            } else {
+                // Permission has already been granted
+
+                // Check if directory structures exist or create if not
+                new fileStructureBuilder().execute(new String[]{
+                        Utility.dataPaths.TEMPLATE_ARCHIVE,
+                        Utility.dataPaths.THUMBNAILS,
+                        Utility.dataPaths.THUMBNAILS_SMALL,
+                        Utility.dataPaths.PICTURES,
+                        Utility.dataPaths.DATA_EXPORT
+                });
+            }
 
             // parse the JSON template
             showLoadingScreen(true);
@@ -80,6 +98,48 @@ public class MainActivity extends ScopeActivity {
         // Display the content accordingly
         resetCurrentView();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the task you need to do.
+                    // Check if directory structures exist or create if not
+                    new fileStructureBuilder().execute(new String[]{
+                            Utility.dataPaths.TEMPLATE_ARCHIVE,
+                            Utility.dataPaths.THUMBNAILS,
+                            Utility.dataPaths.THUMBNAILS_SMALL,
+                            Utility.dataPaths.PICTURES,
+                            Utility.dataPaths.DATA_EXPORT
+                    });
+                } else {
+                    // permission denied, boo! Disable the functionality that depends on this permission.
+                    Toast.makeText(this, "Cemetery Surveyor cannot function without this permission!", Toast.LENGTH_SHORT);
+                }
+                return;
+            }
+
+            case 2: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // do nothing, they must use the camera button again :(
+
+                } else {
+                    // permission denied, boo!
+                    Toast.makeText(this, "Camera must have permission to take pictures!", Toast.LENGTH_SHORT);
+                }
+
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 27
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "net.frakturmedia.cemeterysurvey"
-        minSdkVersion 13
-        targetSdkVersion 23
-        versionCode 15
-        versionName "1.14"
+        minSdkVersion 14
+        targetSdkVersion 27
+        versionCode 16
+        versionName "1.15"
     }
     buildTypes {
         release {
@@ -23,7 +23,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:appcompat-v7:27.1.0'
+    compile 'com.android.support:design:27.1.0'
     compile files('libs/acra-4.8.2.jar')
 }
