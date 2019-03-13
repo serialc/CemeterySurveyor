@@ -32,6 +32,8 @@ import net.frakturmedia.cemeterysurvey.data.CsDbContract;
 
 import java.io.File;
 
+import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
+
 /**
  * Created by cyrille on 06/02/16.
  */
@@ -575,7 +577,8 @@ public class CsCursorAdapter extends CursorAdapter {
                                         public boolean onLongClick(View v) {
 
                                             Intent showThumbnail = new Intent(Intent.ACTION_VIEW);
-                                            showThumbnail.setDataAndType(Uri.fromFile(pictureFileFullSize), "image/*");
+                                            showThumbnail.setDataAndType(FileProvider.getUriForFile(v.getContext(), BuildConfig.APPLICATION_ID + ".provider", pictureFileFullSize), "image/*");
+                                            showThumbnail.setFlags(FLAG_GRANT_READ_URI_PERMISSION);
                                             v.getContext().startActivity(showThumbnail);
 
                                             return true;
