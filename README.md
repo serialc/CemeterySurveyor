@@ -1,7 +1,7 @@
-
 # CemeterySurveyor
-A flexible cemetery research surveying tool.
+A flexible cemetery research surveying tool. See the [Deployment tutorial below](#deployment-tutorial).
 
+## Purpose
 **Cemetery Surveyor is designed to be part of a survey workflow consisting of**:
 * the creation of an ontology,
 * the designing of a survey consisting of categories and attributes defined in a JSON template,
