@@ -101,7 +101,7 @@ public abstract class Utility {
         File JsonTemplate = new File(Utility.dataPaths.TEMPLATE_FILE);
 
         if (!JsonTemplate.exists()) {
-            return "WARNING - No JSON survey template file was found!";
+            return "Missing JSON survey template file! See Help menu option.";
         }
 
         // File exists, copy it

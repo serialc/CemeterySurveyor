@@ -158,6 +158,9 @@ public class ScopeActivity extends AppCompatActivity {
             case R.id.action_delete_item:
                 deleteItem();
                 return true;
+            case R.id.action_help_link:
+                openHelp();
+                return true;
 
             // in all
             case R.id.action_add_attribute:
@@ -1052,6 +1055,7 @@ public class ScopeActivity extends AppCompatActivity {
 
         protected void onPostExecute(String result) {
             if (result != null) {
+                // Error in parsing file - show toast.
                 Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Survey template loaded", Toast.LENGTH_SHORT).show();
@@ -1072,7 +1076,7 @@ public class ScopeActivity extends AppCompatActivity {
             rowsDeleted = getContentResolver().delete(CsDbContract.SurveyAttributeEntry.CONTENT_URI, null, null);
             //Log.d(LOG_TAG, "Rows deleted from SurveyAttribute table: " + rowsDeleted);
 
-            // Get the the JSON root containig the top three nodes
+            // Get the the JSON root containing the top three nodes
             JSONObject templateJson = new JSONObject(surveyTemplateString);
 
             // Call the JSON recursive parsing function for each base node: cemetery, section, grave
@@ -1459,7 +1463,7 @@ public class ScopeActivity extends AppCompatActivity {
             }
         }
 
-        Toast.makeText(this.context, "Data export completed succesfully", Toast.LENGTH_LONG).show();
+        Toast.makeText(this.context, "Data export completed successfully", Toast.LENGTH_LONG).show();
     }
 
     public void checkSurveyRequiredFields(String scope, Long scopeIdentifier) {
@@ -1612,6 +1616,15 @@ public class ScopeActivity extends AppCompatActivity {
                 new String[] { Long.toString(graveId) });
         if( count != 1 ) {
             Log.e(LOG_TAG, "Updating grave status failed.");
+        }
+    }
+
+    public void openHelp() {
+        Uri help_webpage = Uri.parse(getString(R.string.help_url));
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, help_webpage);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
         }
     }
 

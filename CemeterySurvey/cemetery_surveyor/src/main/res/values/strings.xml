@@ -4,6 +4,7 @@
     <string name="action_add_attribute">Add attribute</string>
     <string name="action_delete_items">Delete this item</string>
     <string name="action_export_data">Export data</string>
+    <string name="action_help_link">Help</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -28,5 +29,6 @@
     <string name="required_field">*</string>
     <string name="error_reporting_activity">Error Reporting</string>
 
-    <string name="acra_message">"The application has crashed but the error is being sent to the developer (and the NSA)."</string>
+    <string name="help_url">https://github.com/serialc/CemeterySurveyor</string>
+    <string name="acra_message">"The application has crashed. The error is being sent to the developer."</string>
 </resources>
