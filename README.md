@@ -32,12 +32,12 @@ Here are a few steps to it working on your device:
 
  1. Install the application from the [Google Play Store](https://play.google.com/store/apps/details?id=net.frakturmedia.cemeterysurvey).
 
- 2. Upload a JSON survey template to your device. [Here's a template](https://github.com/serialc/WebCemeterySurveyor/Resources) that you can use as is or as a foundation for your own. The [documentation](https://raw.githubusercontent.com/serialc/CemeterySurveyor/master/Documentation/documentation.pdf) details the syntax to create your survey template.
+ 2. Upload a JSON survey template to your device. [Here's a template](https://github.com/serialc/WebCemeterySurveyor/tree/master/Resources) that you can use as is or as a foundation for your own. The [documentation](https://raw.githubusercontent.com/serialc/CemeterySurveyor/master/Documentation/documentation.pdf) details the syntax to create your survey template.
 	 1. To upload this to your device and the correct location, either download it to your device or connect your device to a computer. Move the JSON template to the directory path **cemetery_survey_application/template/survey_template.json** on the root level of the device storage.
 	 2. If you **Reload JSON template** from within CSA menu in the top right you should no longer see the **"Missing JSON survey template file! See Help menu option."** message.
 	 You will however likely see the message **"Template loading failed: The thumbnail folder named XXXXX was not found."**. The JSON template provided uses thumbnails rather than text for some survey questions responses. CSA can't find those thumbnails as we haven't uploaded them yet. We'll fix that next.
 	 
- 3. Upload the properly formatted/named thumbnails to your device. [Here are the thumbnails](https://github.com/serialc/WebCemeterySurveyor/Resources) used by the JSON template used above.
+ 3. Upload the properly formatted/named thumbnails to your device. [Here are the thumbnails](https://github.com/serialc/WebCemeterySurveyor/tree/master/Resources) used by the JSON template used above.
 	 1. Unzip the thumbnails.
 	 2. As was done for the JSON template, upload the unzipped **thumbnail** folder to your device into the directory **cemetery_survey_application/**. This will replace the existing thumbnail directory.
 	 3. As was done for the JSON template, **Reload JSON template**. This may take a little longer (5-10 seconds) as the thumbnails will be resized.
